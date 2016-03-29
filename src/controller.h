@@ -37,6 +37,7 @@ public:
 
 signals:
     void channelResult(ChannelList list);
+    void getInfoFinished();
 
 private slots:
     //channel

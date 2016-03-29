@@ -124,6 +124,8 @@ void Controller::musicReqFinished()
 
     proMusic(mMusicInfoStru, getBuf);
 
+    emit getInfoFinished();
+
     mMusicReply->deleteLater();
 }
 
@@ -152,31 +154,31 @@ void Controller::proMusic(struMusicInfo &musicInfo,const QByteArray &buf)
                 foreach (const QJsonValue & value, jsonArray)
                 {
                     QJsonObject obj = value.toObject();
-                    qDebug() << "======================picture:" << obj["picture"].toString();
+//                    qDebug() << "======================picture:" << obj["picture"].toString();
                     picture = obj["picture"].toString();
                     musicInfo.picture = picture;
                     qDebug() << "======================playUrl:" << obj["url"].toString();
                     playUrl = obj["url"].toString();
                     musicInfo.playUrl = playUrl;
-                    qDebug() << "======================title:" << obj["title"].toString();
+//                    qDebug() << "======================title:" << obj["title"].toString();
                     title = obj["title"].toString();
                     musicInfo.title = title;
-                    qDebug() << "======================public_time:" << obj["public_time"].toString();
+//                    qDebug() << "======================public_time:" << obj["public_time"].toString();
                     public_time = obj["public_time"].toString();
                     musicInfo.public_time = public_time;
-                    qDebug() << "======================singerId:" << obj["sid"].toString();
+//                    qDebug() << "======================singerId:" << obj["sid"].toString();
                     singerId = obj["sid"].toString();
                     musicInfo.singerId = singerId;
-                    qDebug() << "======================singer:" << obj["artist"].toString();
+//                    qDebug() << "======================singer:" << obj["artist"].toString();
                     singer = obj["artist"].toString();
                     musicInfo.singer = singer;
-                    qDebug() << "======================albumtitle:" << obj["albumtitle"].toString();
+//                    qDebug() << "======================albumtitle:" << obj["albumtitle"].toString();
                     albumtitle = obj["albumtitle"].toString();
                     musicInfo.albumtitle = albumtitle;
-                    qDebug() << "=====================ssid:" << obj["ssid"].toString();
+//                    qDebug() << "=====================ssid:" << obj["ssid"].toString();
                     ssid = obj["ssid"].toString();
                     musicInfo.ssid = ssid;
-                    qDebug() << "=====================like:" << obj["like"].toInt();
+//                    qDebug() << "=====================like:" << obj["like"].toInt();
                     like = obj["like"].toInt();
                     musicInfo.like = like;
                 }

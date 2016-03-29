@@ -98,6 +98,7 @@ CPage {
                     anchors.fill: parent
                     onClicked: {
                         //if like, turn to unlike;else turn to like
+                        //if like, it will be added to like list
                     }
                 }
             }

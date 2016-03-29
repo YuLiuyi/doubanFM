@@ -3,9 +3,14 @@ import com.syberos.basewidgets 2.0
 
 CPageStackWindow {
     initialPage:CPage{
+
+        property int c_index: 0
+
+        id: mainPg
         anchors.fill: parent
         color: "#e2dbdb"
         Component.onCompleted: {
+            console.log("component completed.")
             contrl.getChannelInfoReq();
         }
 
@@ -71,25 +76,34 @@ CPageStackWindow {
                 MouseArea {
                     anchors.fill: parent
                     onClicked: {
+                        mainPg.c_index = index
                         var cid = channelListModel.getChannel_id(index);
                         var sid = channelListModel.getSeq_id(index);
                         contrl.getMusicReq(cid, sid)
-
-                        var picture = contrl.showMusic(0);//
-                        var playUrl = contrl.showMusic(1);
-                        var title = contrl.showMusic(2);
-                        var public_time = contrl.showMusic(3);
-                        var singerId = contrl.showMusic(4);
-                        var singer = contrl.showMusic(5);
-                        var albumtitle = contrl.showMusic(6);
-                        var ssid = contrl.showMusic(7);
-                        var like = contrl.showMusic(8);
-                        pageStack.push("qrc:///qml/FM.qml",
-                                       {channelName: channelListModel.getName(index),
-                                       picture: picture, playUrl: playUrl, title: title, public_time: public_time,
-                                       singerId: singerId, singer: singer, albumtitle: albumtitle, ssid:ssid, like: like})
                     }
                 }
+            }
+        }
+
+        Connections{
+            target: contrl
+            onGetInfoFinished :{
+                console.log("getInfofinished");
+                console.log("playUrl = "+contrl.showMusic(1))
+
+//                var picture = contrl.showMusic(0);
+//                var playUrl = contrl.showMusic(1);
+//                var title = contrl.showMusic(2);
+//                var public_time = contrl.showMusic(3);
+//                var singerId = contrl.showMusic(4);
+//                var singer = contrl.showMusic(5);
+//                var albumtitle = contrl.showMusic(6);
+//                var ssid = contrl.showMusic(7);
+//                var like = contrl.showMusic(8);
+                pageStack.push("qrc:///qml/FM.qml",
+                               {channelName: channelListModel.getName(mainPg.c_index),
+                               picture: contrl.showMusic(0), playUrl: contrl.showMusic(1), title: contrl.showMusic(2), public_time: contrl.showMusic(3),
+                               singerId: contrl.showMusic(4), singer: contrl.showMusic(5), albumtitle: contrl.showMusic(6), ssid:contrl.showMusic(7), like: contrl.showMusic(8)});
             }
         }
     }
