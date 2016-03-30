@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<sopconfig syberos:versionCode="1" xmlns:syberos="http://schemas.syberos.com/sop/res/syberos/v1" syberos:shareUserId="" syberos:sopid="com.mycompany.douban" syberos:versionName="1.0.0">
-    <uses-permission syberos:name="syberos.permission.ACCESS_WIFI"/>
-    <uses-sdk syberos:minSdkVersion="" syberos:targetSdkVersion=""/>
-    <application syberos:description="Brief introduction of your application here. " syberos:name="doubanFM" syberos:debuggable="true" syberos:icon="res/douban.png">
-        <uiapp syberos:id="douban" syberos:splash="" syberos:exec="bin/douban" syberos:launcher="true" syberos:name="" syberos:background="" syberos:icon="res/douban.png"/>
-    </application>
-</sopconfig>
