@@ -30,7 +30,7 @@ public:
     void proChannelInfo(const QByteArray &buf);
 
     //music
-    Q_INVOKABLE void getMusicReq(QString cid, int sid);
+    Q_INVOKABLE void getMusicReq(QString cid, int sid, bool isNext);
     void proMusic(struMusicInfo &musicInfo,const QByteArray &buf);
     Q_INVOKABLE QVariant showMusic(int index);
 
@@ -38,6 +38,7 @@ public:
 signals:
     void channelResult(ChannelList list);
     void getInfoFinished();
+    void freshFinished();
 
 private slots:
     //channel
@@ -53,6 +54,7 @@ private:
     QNetworkReply          *mChannelInfoReply;
     QNetworkReply          *mMusicReply;
     struMusicInfo          mMusicInfoStru;
+    bool                   mIsNext;
 
 };
 

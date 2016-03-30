@@ -7,11 +7,12 @@
 #include <QJsonArray>
 #include <QDebug>
 #define CHANNEL_REQUEST "https://www.douban.com/j/app/radio/channels"
-#define MUSIC_REQUEST "https://www.douban.com/j/app/radio/people?app_name=radio_android&version=100&type=b&channel="
+#define MUSIC_REQUEST "https://www.douban.com/j/app/radio/people?app_name=radio_android&version=100&type=e&channel="
 
 Controller::Controller()
 {
     mManager = new QNetworkAccessManager();
+    mIsNext = false;
 }
 
 //send request
@@ -96,9 +97,10 @@ void Controller::error(QNetworkReply::NetworkError error)
 }
 
 
-void Controller::getMusicReq(QString cid, int sid)
+void Controller::getMusicReq(QString cid, int sid, bool isNext)
 {
     //request url:https://www.douban.com/j/app/radio/people?app_name=radio_android&version=100&type=b&channel=5&sid=4
+    mIsNext = isNext;
     QNetworkRequest request;
     QString url = MUSIC_REQUEST;
     qDebug() << Q_FUNC_INFO << "cid = " << cid << "sid = " << sid;
@@ -124,8 +126,11 @@ void Controller::musicReqFinished()
 
     proMusic(mMusicInfoStru, getBuf);
 
-    emit getInfoFinished();
-
+    if(mIsNext) {
+        emit freshFinished();
+    } else {
+        emit getInfoFinished();
+    }
     mMusicReply->deleteLater();
 }
 
@@ -154,31 +159,31 @@ void Controller::proMusic(struMusicInfo &musicInfo,const QByteArray &buf)
                 foreach (const QJsonValue & value, jsonArray)
                 {
                     QJsonObject obj = value.toObject();
-//                    qDebug() << "======================picture:" << obj["picture"].toString();
+                    //                    qDebug() << "======================picture:" << obj["picture"].toString();
                     picture = obj["picture"].toString();
                     musicInfo.picture = picture;
                     qDebug() << "======================playUrl:" << obj["url"].toString();
                     playUrl = obj["url"].toString();
                     musicInfo.playUrl = playUrl;
-//                    qDebug() << "======================title:" << obj["title"].toString();
+                    //                    qDebug() << "======================title:" << obj["title"].toString();
                     title = obj["title"].toString();
                     musicInfo.title = title;
-//                    qDebug() << "======================public_time:" << obj["public_time"].toString();
+                    //                    qDebug() << "======================public_time:" << obj["public_time"].toString();
                     public_time = obj["public_time"].toString();
                     musicInfo.public_time = public_time;
-//                    qDebug() << "======================singerId:" << obj["sid"].toString();
+                    //                    qDebug() << "======================singerId:" << obj["sid"].toString();
                     singerId = obj["sid"].toString();
                     musicInfo.singerId = singerId;
-//                    qDebug() << "======================singer:" << obj["artist"].toString();
+                    //                    qDebug() << "======================singer:" << obj["artist"].toString();
                     singer = obj["artist"].toString();
                     musicInfo.singer = singer;
-//                    qDebug() << "======================albumtitle:" << obj["albumtitle"].toString();
+                    //                    qDebug() << "======================albumtitle:" << obj["albumtitle"].toString();
                     albumtitle = obj["albumtitle"].toString();
                     musicInfo.albumtitle = albumtitle;
-//                    qDebug() << "=====================ssid:" << obj["ssid"].toString();
+                    //                    qDebug() << "=====================ssid:" << obj["ssid"].toString();
                     ssid = obj["ssid"].toString();
                     musicInfo.ssid = ssid;
-//                    qDebug() << "=====================like:" << obj["like"].toInt();
+                    //                    qDebug() << "=====================like:" << obj["like"].toInt();
                     like = obj["like"].toInt();
                     musicInfo.like = like;
                 }

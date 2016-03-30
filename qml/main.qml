@@ -5,6 +5,8 @@ CPageStackWindow {
     initialPage:CPage{
 
         property int c_index: 0
+        property string cid: ""
+        property string sid: ""
 
         id: mainPg
         anchors.fill: parent
@@ -77,9 +79,9 @@ CPageStackWindow {
                     anchors.fill: parent
                     onClicked: {
                         mainPg.c_index = index
-                        var cid = channelListModel.getChannel_id(index);
-                        var sid = channelListModel.getSeq_id(index);
-                        contrl.getMusicReq(cid, sid)
+                        mainPg.cid = channelListModel.getChannel_id(index);
+                        mainPg.sid = channelListModel.getSeq_id(index);
+                        contrl.getMusicReq(mainPg.cid, mainPg.sid, false)
                     }
                 }
             }
@@ -102,8 +104,10 @@ CPageStackWindow {
 //                var like = contrl.showMusic(8);
                 pageStack.push("qrc:///qml/FM.qml",
                                {channelName: channelListModel.getName(mainPg.c_index),
-                               picture: contrl.showMusic(0), playUrl: contrl.showMusic(1), title: contrl.showMusic(2), public_time: contrl.showMusic(3),
-                               singerId: contrl.showMusic(4), singer: contrl.showMusic(5), albumtitle: contrl.showMusic(6), ssid:contrl.showMusic(7), like: contrl.showMusic(8)});
+                                   picture: contrl.showMusic(0), playUrl: contrl.showMusic(1), title: contrl.showMusic(2),
+                                   public_time: contrl.showMusic(3),singerId: contrl.showMusic(4), singer: contrl.showMusic(5),
+                                   albumtitle: contrl.showMusic(6), ssid:contrl.showMusic(7),
+                                   like: contrl.showMusic(8), cid: mainPg.cid, sid: mainPg.sid});
             }
         }
     }

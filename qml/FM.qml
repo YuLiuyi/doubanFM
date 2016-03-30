@@ -18,6 +18,8 @@ CPage {
     property string albumtitle:""
     property int ssid :0
     property int like: 0
+    property string sid: ""
+    property string cid: ""
 
     contentAreaItem: Item {
 
@@ -38,6 +40,15 @@ CPage {
                 text: channelName
             }
         }
+
+//        Image {
+//            id: play
+//            anchors.top: rect.bottom
+//            anchors.topMargin: 60
+//            width: 200
+//            anchors.horizontalCenter: parent.horizontalCenter
+//            source: picture == "" ? "qrc:/images/res/album_init.jpg":picture
+//        }
 
         ImageButton {
             id: play
@@ -125,18 +136,37 @@ CPage {
                 anchors.verticalCenter: parent.verticalCenter
                 source: "qrc:/images/res/next.png"
                 MouseArea {
+                    anchors.fill: parent
                     onClicked: {
-                        //next
+                        console.log("next")
+                        contrl.getMusicReq(cid,sid,true)
                     }
                 }
             }
         }
     }
 
+    Connections {
+        target: contrl
+        onFreshFinished: {
+            console.log("next playUrl = "+ playUrl)
+            picture = contrl.showMusic(0);
+            playUrl = contrl.showMusic(1);
+            title = contrl.showMusic(2);
+            public_time = contrl.showMusic(3);
+            singerId = contrl.showMusic(4);
+            singer = contrl.showMusic(5);
+            albumtitle = contrl.showMusic(6);
+            ssid = contrl.showMusic(7);
+            like = contrl.showMusic(8);
+            mediaPlayer.play()
+        }
+    }
+
     MediaPlayer {
         id: mediaPlayer
         autoPlay: true
-        source: playUrl
+        source: playUrl       
     }
 
     CDialog {
