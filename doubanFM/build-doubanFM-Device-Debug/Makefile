@@ -477,38 +477,38 @@ compiler_rcc_make_all: qrc_res.cpp
 compiler_rcc_clean:
 	-$(DEL_FILE) qrc_res.cpp
 qrc_res.cpp: ../doubanFM/res.qrc \
-		../doubanFM/qml/FM.qml \
 		../doubanFM/qml/ImageButton.qml \
+		../doubanFM/qml/FM.qml \
 		../doubanFM/qml/main.qml \
-		../doubanFM/res/arrow_right.png \
-		../doubanFM/res/album_init.jpg \
-		../doubanFM/res/apple-ios-linen-texture.jpg \
-		../doubanFM/res/trash_can_clicked.png \
-		../doubanFM/res/like.png \
 		../doubanFM/res/like_disabled.png \
-		../doubanFM/res/bg.png \
-		../doubanFM/res/next_normal.png \
-		../doubanFM/res/pause_normal.png \
+		../doubanFM/res/unlike.png \
+		../doubanFM/res/user_man_circle.png \
 		../doubanFM/res/channel.png \
 		../doubanFM/res/setting-icon.png \
-		../doubanFM/res/arrow_left_clicked.png \
-		../doubanFM/res/unlike.png \
-		../doubanFM/res/volume_clicked.png \
 		../doubanFM/res/douban.png \
-		../doubanFM/res/lyric_handler_pressed.png \
-		../doubanFM/res/arrow_left.png \
-		../doubanFM/res/playlist_more.png \
-		../doubanFM/res/ban.png \
-		../doubanFM/res/pause_clicked.png \
-		../doubanFM/res/volume_normal.png \
-		../doubanFM/res/user_man_circle.png \
-		../doubanFM/res/next.png \
-		../doubanFM/res/next_clicked.png \
-		../doubanFM/res/logout.png \
+		../doubanFM/res/album_init.jpg \
 		../doubanFM/res/channel_handler.png \
-		../doubanFM/res/trash_can_normal.png \
-		../doubanFM/res/lyric_handler_normal.png \
 		../doubanFM/res/icon_lyrics.png \
+		../doubanFM/res/like.png \
+		../doubanFM/res/playlist_more.png \
+		../doubanFM/res/bg.png \
+		../doubanFM/res/arrow_right.png \
+		../doubanFM/res/volume_normal.png \
+		../doubanFM/res/pause_clicked.png \
+		../doubanFM/res/logout.png \
+		../doubanFM/res/arrow_left_clicked.png \
+		../doubanFM/res/trash_can_normal.png \
+		../doubanFM/res/apple-ios-linen-texture.jpg \
+		../doubanFM/res/next_clicked.png \
+		../doubanFM/res/lyric_handler_pressed.png \
+		../doubanFM/res/volume_clicked.png \
+		../doubanFM/res/lyric_handler_normal.png \
+		../doubanFM/res/arrow_left.png \
+		../doubanFM/res/next_normal.png \
+		../doubanFM/res/next.png \
+		../doubanFM/res/trash_can_clicked.png \
+		../doubanFM/res/ban.png \
+		../doubanFM/res/pause_normal.png \
 		../doubanFM/res/arrow_right_clicked.png
 	/usr/lib/qt5/bin/rcc -name res ../doubanFM/res.qrc -o qrc_res.cpp
 

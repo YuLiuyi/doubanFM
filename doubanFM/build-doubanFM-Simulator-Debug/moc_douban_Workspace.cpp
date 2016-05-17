@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'douban_Workspace.h'
 **
-** Created by: The Qt Meta Object Compiler version 67 (Qt 5.3.0)
+** Created by: The Qt Meta Object Compiler version 67 (Qt 5.5.1)
 **
 ** WARNING! All changes made in this file will be lost!
 *****************************************************************************/
@@ -12,7 +12,7 @@
 #if !defined(Q_MOC_OUTPUT_REVISION)
 #error "The header file 'douban_Workspace.h' doesn't include <QObject>."
 #elif Q_MOC_OUTPUT_REVISION != 67
-#error "This file was generated using the moc from 5.3.0. It"
+#error "This file was generated using the moc from 5.5.1. It"
 #error "cannot be used with the include files from this version of Qt."
 #error "(The moc has changed too much.)"
 #endif
@@ -20,16 +20,17 @@
 QT_BEGIN_MOC_NAMESPACE
 struct qt_meta_stringdata_douban_Workspace_t {
     QByteArrayData data[1];
-    char stringdata[17];
+    char stringdata0[17];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
-    qptrdiff(offsetof(qt_meta_stringdata_douban_Workspace_t, stringdata) + ofs \
+    qptrdiff(offsetof(qt_meta_stringdata_douban_Workspace_t, stringdata0) + ofs \
         - idx * sizeof(QByteArrayData)) \
     )
 static const qt_meta_stringdata_douban_Workspace_t qt_meta_stringdata_douban_Workspace = {
     {
-QT_MOC_LITERAL(0, 0, 16)
+QT_MOC_LITERAL(0, 0, 16) // "douban_Workspace"
+
     },
     "douban_Workspace"
 };
@@ -61,7 +62,7 @@ void douban_Workspace::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int
 
 const QMetaObject douban_Workspace::staticMetaObject = {
     { &CWorkspace::staticMetaObject, qt_meta_stringdata_douban_Workspace.data,
-      qt_meta_data_douban_Workspace,  qt_static_metacall, 0, 0}
+      qt_meta_data_douban_Workspace,  qt_static_metacall, Q_NULLPTR, Q_NULLPTR}
 };
 
 
@@ -72,8 +73,8 @@ const QMetaObject *douban_Workspace::metaObject() const
 
 void *douban_Workspace::qt_metacast(const char *_clname)
 {
-    if (!_clname) return 0;
-    if (!strcmp(_clname, qt_meta_stringdata_douban_Workspace.stringdata))
+    if (!_clname) return Q_NULLPTR;
+    if (!strcmp(_clname, qt_meta_stringdata_douban_Workspace.stringdata0))
         return static_cast<void*>(const_cast< douban_Workspace*>(this));
     return CWorkspace::qt_metacast(_clname);
 }
