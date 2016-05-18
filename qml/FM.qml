@@ -148,15 +148,17 @@ CPage {
             target: contrl
             onFreshFinished: {
                 console.log("next playUrl = "+ playUrl)
-                picture = contrl.showMusic(0);
-                playUrl = contrl.showMusic(1);
-                title = contrl.showMusic(2);
-                public_time = contrl.showMusic(3);
-                singerId = contrl.showMusic(4);
-                singer = contrl.showMusic(5);
-                albumtitle = contrl.showMusic(6);
-                //            ssid = contrl.showMusic(7);
-                like = contrl.showMusic(8);
+//                picture = contrl.showMusic(0);
+//                playUrl = contrl.showMusic(1);
+//                title = contrl.showMusic(2);
+//                public_time = contrl.showMusic(3);
+//                singerId = contrl.showMusic(4);
+//                singer = contrl.showMusic(5);
+//                albumtitle = contrl.showMusic(6);
+//                //            ssid = contrl.showMusic(7);
+//                like = contrl.showMusic(8);
+//
+                page.next()
                 mediaPlayer.play()
             }
         }
@@ -174,16 +176,9 @@ CPage {
                 console.log("status = " + status)
                 if(mediaPlayer.status == 7) {
                     console.log("next playUrl = "+ playUrl)
-                    picture = contrl.showMusic(0);
-                    playUrl = contrl.showMusic(1);
-                    title = contrl.showMusic(2);
-                    public_time = contrl.showMusic(3);
-                    singerId = contrl.showMusic(4);
-                    singer = contrl.showMusic(5);
-                    albumtitle = contrl.showMusic(6);
-                    //            ssid = contrl.showMusic(7);
-//                    like = contrl.showMusic(8);
-                    mediaPlayer.source = playUrl
+//                    page.next()
+                    contrl.getMusicReq(cid,sid,true)
+                    page.next()
                     mediaPlayer.play()
                 }
             }
@@ -263,5 +258,17 @@ CPage {
                 color: "#699169"
             }
         }
+    }
+
+    function next(){
+        picture = contrl.showMusic(0);
+        playUrl = contrl.showMusic(1);
+        title = contrl.showMusic(2);
+        public_time = contrl.showMusic(3);
+        singerId = contrl.showMusic(4);
+        singer = contrl.showMusic(5);
+        albumtitle = contrl.showMusic(6);
+        //            ssid = contrl.showMusic(7);
+//                    like = contrl.showMusic(8);
     }
 }
