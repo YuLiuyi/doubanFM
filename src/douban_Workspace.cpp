@@ -16,6 +16,7 @@ douban_Workspace::douban_Workspace()
     m_view->rootContext()->setContextProperty("contrl", &contrl);
     QObject::connect(&contrl,SIGNAL(channelResult(ChannelList)), mChannelListModel, SLOT(handleList(ChannelList)));
 
+//    m_mediaPlayer = new MusicPlayer;
     m_view->rootContext()->setContextProperty("player", m_mediaPlayer);
 
     m_view->setSource(QUrl("qrc:/qml/main.qml"));

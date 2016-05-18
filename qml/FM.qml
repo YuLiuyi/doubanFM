@@ -24,24 +24,6 @@ CPage {
 
     contentAreaItem: Item {
 
-        Rectangle {
-            id: rect
-            anchors.top: parent.top
-            width: parent.width
-            height: 60
-            color: "#7a6767"
-            Text {
-                color: "#5a3939"
-                anchors {
-                    verticalCenter: parent.verticalCenter
-                    horizontalCenter: parent.horizontalCenter
-                }
-                font.pixelSize: 40
-                font.bold: true
-                text: channelName
-            }
-        }
-
         Image {
             id: bg
             anchors.fill: parent
@@ -50,22 +32,30 @@ CPage {
         }
 
         FastBlur{
-            anchors.left: parent.left
-            anchors.right: parent.right
-            anchors.top: rect.bottom
-            anchors.bottom:parent.bottom
+            anchors.fill: parent
             source: bg
-            radius: 70
+            radius: 80
+        }
+
+        Text {
+            id: rect
+            color: "#5a3939"
+            anchors.top: parent.top
+            anchors.topMargin: 40
+            anchors.horizontalCenter: parent.horizontalCenter
+            font.pixelSize: 50
+            font.bold: true
+            text:"--  "+ channelName+"  --"
         }
 
         RoundImage{
-            id:play
+            id: play
             anchors.top: rect.bottom
-            anchors.topMargin: 80
+            anchors.topMargin: 40
             anchors.horizontalCenter: parent.horizontalCenter
             //anchors.fill: parent;
-            width:400
-            height:400
+            width: 450
+            height: 450
             source: picture == "" ? "qrc:/images/res/album_init.jpg":picture
             color:"lightblue"
             border:5
@@ -91,7 +81,7 @@ CPage {
             id: song
             color: "#696161"
             anchors.top: sname.bottom
-            anchors.topMargin: 5
+            anchors.topMargin: 10
             anchors.horizontalCenter: parent.horizontalCenter
             font.pixelSize: 30
             text: singer
@@ -171,10 +161,32 @@ CPage {
             }
         }
 
+
         MediaPlayer {
             id: mediaPlayer
             autoPlay: true
             source: playUrl
+            onPositionChanged: {
+//                console.log("position = "+ position)
+                console.log("duration = "+ duration)
+            }
+            onStatusChanged: {
+                console.log("status = " + status)
+                if(mediaPlayer.status == 7) {
+                    console.log("next playUrl = "+ playUrl)
+                    picture = contrl.showMusic(0);
+                    playUrl = contrl.showMusic(1);
+                    title = contrl.showMusic(2);
+                    public_time = contrl.showMusic(3);
+                    singerId = contrl.showMusic(4);
+                    singer = contrl.showMusic(5);
+                    albumtitle = contrl.showMusic(6);
+                    //            ssid = contrl.showMusic(7);
+//                    like = contrl.showMusic(8);
+                    mediaPlayer.source = playUrl
+                    mediaPlayer.play()
+                }
+            }
         }
 
         CDialog {
@@ -247,7 +259,7 @@ CPage {
                 anchors.left: parent.left
                 anchors.top: parent.top
                 anchors.bottom: parent.bottom
-                width: player.duration() > 0 ? parent.width * player.position / player.duration() : 0
+                width: mediaPlayer.duration > 0 ? parent.width * mediaPlayer.position / mediaPlayer.duration : 0
                 color: "#699169"
             }
         }
