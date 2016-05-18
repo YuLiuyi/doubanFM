@@ -16,8 +16,9 @@ douban_Workspace::douban_Workspace()
     m_view->rootContext()->setContextProperty("contrl", &contrl);
     QObject::connect(&contrl,SIGNAL(channelResult(ChannelList)), mChannelListModel, SLOT(handleList(ChannelList)));
 
-//    m_mediaPlayer = new MusicPlayer;
-    m_view->rootContext()->setContextProperty("player", m_mediaPlayer);
+    mMediaPlayer = new MusicPlayer;
+    m_view->rootContext()->setContextProperty("player", mMediaPlayer);
+//    qmlRegisterType<MusicPlayer>("MusicPlayer", 1, 0, "MusicPlayer");
 
     m_view->setSource(QUrl("qrc:/qml/main.qml"));
     m_view->showFullScreen();

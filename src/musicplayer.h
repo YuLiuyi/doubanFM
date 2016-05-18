@@ -8,7 +8,7 @@ class MusicPlayer : public QObject
 {
     Q_OBJECT
 
-    Q_PROPERTY(int duration READ duration)
+    Q_PROPERTY(int duration READ duration NOTIFY durationChanged)
     Q_PROPERTY(qint64 position READ position NOTIFY positionChanged)
     Q_PROPERTY(QMediaPlayer::State state READ state NOTIFY stateChanged)
     Q_PROPERTY(QMediaPlayer::MediaStatus mediaStatus READ mediaStatus NOTIFY mediaStatusChanged)
@@ -24,7 +24,7 @@ public:
     qint64 position();                  //播放的位置
     int volume();                       //音量
     Q_INVOKABLE qreal playbackRate();   //播放速率
-    Q_INVOKABLE void mplay(QUrl url);   //url为播放文件的路径
+    Q_INVOKABLE void mplay(QString path);   //url为播放文件的路径
     Q_INVOKABLE void pause();           //暂停
     Q_INVOKABLE void play();            //播放
     Q_INVOKABLE void stop();        	//停止
@@ -49,15 +49,17 @@ signals:
     void seekableChanged(bool videoAvailable);
     void playbackRateChanged(float);
     void mediaChange(QMediaContent);
+    void durationChanged(qint64);
 
 public slots:
     void handlePositionChanged(qint64 position);
     void handleStateChanged(QMediaPlayer::State);
     void handleMediaStatusChanged(QMediaPlayer::MediaStatus);
     void setPlaylist(QMediaPlaylist *playlist);
+    void handleDurationChanged(qint64 duration);
 
 private:
-    MusicPlayer *m_mediaPlayer;
+    QMediaPlayer *m_mediaPlayer;
 };
 
 #endif // MUSICPLAYER_H

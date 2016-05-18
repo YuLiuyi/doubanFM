@@ -36,5 +36,9 @@
         <file>res/apple-ios-linen-texture.jpg</file>
         <file>res/album_init.jpg</file>
         <file>res/playlist_more.png</file>
+        <file>res/play.svg</file>
+        <file>res/pause.svg</file>
+        <file>res/play_2.png</file>
+        <file>res/pause_2.png</file>
     </qresource>
 </RCC>

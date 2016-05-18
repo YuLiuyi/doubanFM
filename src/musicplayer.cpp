@@ -5,7 +5,7 @@
 MusicPlayer::MusicPlayer(QObject *parent) :
     QObject(parent)
 {
-    m_mediaPlayer = new MusicPlayer();
+    m_mediaPlayer = new QMediaPlayer();
     connect(m_mediaPlayer, SIGNAL(positionChanged(qint64)), this, SLOT(handlePositionChanged(qint64)));
 
     connect(m_mediaPlayer, SIGNAL(durationChanged(qint64)), this, SLOT(handleDurationChanged(qint64)));
@@ -52,7 +52,7 @@ void MusicPlayer::setPlaybackRate(qreal rate)
 
 bool MusicPlayer::muted()
 {
-    return m_mediaPlayer->muted();
+    return m_mediaPlayer->isMuted();
     qDebug()<<"muted!!";
 }
 
@@ -88,6 +88,11 @@ void MusicPlayer::handleStateChanged(QMediaPlayer::State state)
 {
     emit stateChanged(state);
 }
+void MusicPlayer::handleDurationChanged(qint64 duration)
+{
+    qDebug() << Q_FUNC_INFO <<  "duration: " <<  duration;
+    emit durationChanged(duration);
+}
 
 QMediaPlayer::State MusicPlayer::state()
 {
@@ -104,12 +109,12 @@ void MusicPlayer::handleMediaStatusChanged(QMediaPlayer::MediaStatus status)
     emit mediaStatusChanged(status);
 }
 
-void MusicPlayer::mplay(QUrl url)
+void MusicPlayer::mplay(QString path)
 {
     qDebug() << Q_FUNC_INFO << "[thread]  current thread: " << QThread::currentThreadId();
 
     qDebug()<<__FUNCTION__<<__LINE__<<"play!!!!!!";
-    m_mediaPlayer->setMedia(QMediaContent(url));
+    m_mediaPlayer->setMedia(QMediaContent(QUrl(path)));
     play();
 }
 

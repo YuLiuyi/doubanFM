@@ -23,7 +23,7 @@ private:
     QQuickView *m_view;
     Controller contrl;
     ChannelListModel *mChannelListModel;
-    MusicPlayer *m_mediaPlayer;
+    MusicPlayer *mMediaPlayer;
 
 
 public:

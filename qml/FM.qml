@@ -4,6 +4,7 @@ import QtMultimedia 5.0
 import QtQuick.Controls 1.2
 import QtQuick.Dialogs 1.2
 import QtGraphicalEffects 1.0
+//import MusicPlayer 1.0
 
 CPage {
     id: page
@@ -24,6 +25,30 @@ CPage {
 
     contentAreaItem: Item {
 
+//        MusicPlayer {
+//            id: player
+//            onPositionChanged: {
+////                console.log("position = "+ position)
+//                console.log("duration = "+ player.duration)
+////                if(duration == -1) {
+////                    gToast.requestToast("play failed!")
+////                }
+//            }
+//            onMediaStatusChanged: {
+//                console.log("status = " + status)
+//                if(player.mediaStatus == 7) {
+//                    console.log("next playUrl = "+ playUrl)
+////                    page.next()
+//                    contrl.getMusicReq(cid,sid,true)
+//                    page.next()
+//                    player.mplay(playUrl)
+//                }
+//            }
+//        }
+        Component.onCompleted: {
+            player.mplay(playUrl)
+        }
+
         Image {
             id: bg
             anchors.fill: parent
@@ -35,6 +60,23 @@ CPage {
             anchors.fill: parent
             source: bg
             radius: 80
+        }
+
+        Image {
+            id: list
+            source: "qrc:/images/res/arrow_left_clicked.png"
+            anchors.top: parent.top
+            anchors.topMargin: 40
+            anchors.left: parent.left
+            anchors.leftMargin: 20
+            width: 40
+            height: 40
+            MouseArea{
+                anchors.fill: parent
+                onClicked: {
+
+                }
+            }
         }
 
         Text {
@@ -62,19 +104,27 @@ CPage {
         }
 
         Text {
-            id: sname
-            color: "#000000"
-            //            width: 200
-            anchors.top: play.bottom
-            anchors.topMargin: 100
-            anchors.horizontalCenter: parent.horizontalCenter
-            font.pixelSize: 50
-            text: title
-            elide: Text.ElideMiddle
-            maximumLineCount: 1
-            //            wrapMode: Text.WordWrap
-            font.family: "Courier New"
-        }
+                id: sname
+                text: title
+                color: "#000000"
+                font.family: "Courier New"
+                font.pixelSize: 50
+                anchors.top: play.bottom
+                anchors.topMargin: 100
+//                width: 200
+//                anchors.horizontalCenter: parent.horizontalCenter
+                PropertyAnimation on x {
+                    id: animation
+//                    running: animationRunning
+                    from: 405
+                    to:(0-sname.text.length*sname.font.pixelSize)+200;
+                    duration: 1000*4
+                    loops: Animation.Infinite
+                    onStopped:{
+                        animation.start()
+                    }
+                }
+            }
 
 
         Text {
@@ -97,23 +147,6 @@ CPage {
             anchors.horizontalCenter: parent.horizontalCenter
 
             Image {
-                id: like
-                width:  80
-                height: 80
-                anchors.verticalCenter: parent.verticalCenter
-                source: "qrc:/images/res/unlike.png"
-
-
-                MouseArea {
-                    anchors.fill: parent
-                    onClicked: {
-                        //if like, turn to unlike;else turn to like
-                        //if like, it will be added to like list
-                    }
-                }
-            }
-
-            Image {
                 id: more
                 width:  80
                 height: 80
@@ -129,11 +162,32 @@ CPage {
             }
 
             Image {
-                id: next
+                id: playorpause
                 width:  80
                 height: 80
                 anchors.verticalCenter: parent.verticalCenter
-                source: "qrc:/images/res/next.png"
+                source: "qrc:/images/res/play_2.png"
+                MouseArea {
+                    anchors.fill: parent
+                    onClicked: {
+//                        if(mediaPlayer.playbackState == mediaPlayer.PlayingState)
+//                        {
+//                            console.log("state = "+ mediaPlayer.playbackState)
+//                            mediaPlayer.pause()
+//                        } else {
+//                            console.log("state = "+ mediaPlayer.playbackState)
+//                            mediaPlayer.play()
+//                        }
+                    }
+                }
+            }
+
+            Image {
+                id: next
+                width:  80
+                height: 70
+                anchors.verticalCenter: parent.verticalCenter
+                source: "qrc:/images/res/next_clicked.png"
                 MouseArea {
                     anchors.fill: parent
                     onClicked: {
@@ -159,28 +213,7 @@ CPage {
 //                like = contrl.showMusic(8);
 //
                 page.next()
-                mediaPlayer.play()
-            }
-        }
-
-
-        MediaPlayer {
-            id: mediaPlayer
-            autoPlay: true
-            source: playUrl
-            onPositionChanged: {
-//                console.log("position = "+ position)
-                console.log("duration = "+ duration)
-            }
-            onStatusChanged: {
-                console.log("status = " + status)
-                if(mediaPlayer.status == 7) {
-                    console.log("next playUrl = "+ playUrl)
-//                    page.next()
-                    contrl.getMusicReq(cid,sid,true)
-                    page.next()
-                    mediaPlayer.play()
-                }
+                player.mplay(playUrl)
             }
         }
 
@@ -254,7 +287,7 @@ CPage {
                 anchors.left: parent.left
                 anchors.top: parent.top
                 anchors.bottom: parent.bottom
-                width: mediaPlayer.duration > 0 ? parent.width * mediaPlayer.position / mediaPlayer.duration : 0
+                width: player.duration> 0 ? parent.width * player.position / player.duration: 0
                 color: "#699169"
             }
         }
