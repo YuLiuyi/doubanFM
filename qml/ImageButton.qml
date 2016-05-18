@@ -14,6 +14,7 @@ Rectangle{
     color: "transparent"
     width: image.width + imageMargin
     height: image.height + imageMargin
+    radius: 270
 
     Image {
         id:image

@@ -79,12 +79,6 @@ int MusicPlayer::volume()
     return m_mediaPlayer->volume();
 }
 
-void MusicPlayer::handleDurationChanged(qint64 duration)
-{
-    qDebug() << Q_FUNC_INFO <<  "duration: " <<  duration;
-    emit durationChanged(duration);
-}
-
 void MusicPlayer::handlePositionChanged(qint64 position)
 {
     emit positionChanged(position);

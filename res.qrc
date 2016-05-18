@@ -3,6 +3,7 @@
         <file>qml/main.qml</file>
         <file>qml/FM.qml</file>
         <file>qml/ImageButton.qml</file>
+        <file>qml/RoundImage.qml</file>
     </qresource>
     <qresource prefix="/images">
         <file>res/douban.png</file>

@@ -40,13 +40,17 @@ SOURCES += src/main.cpp \
     src/controller.cpp \
     src/musicplayer.cpp \
     src/channelInfo.cpp \
-    src/channelListModel.cpp
+    src/channelListModel.cpp \
+    src/likeInfo.cpp \
+    src/likeListmodel.cpp
 
 HEADERS += src/douban_Workspace.h \
     src/controller.h \
     src/channelInfo.h \
     src/channelListModel.h \
-    src/musicplayer.h
+    src/musicplayer.h \
+    src/likeInfo.h \
+    src/likeListmodel.h
 
 # Installation path
 target.path = $$INS_DIR/bin
@@ -68,5 +72,8 @@ OTHER_FILES += $$QML_FILES *.qm \
     qml/FM.qml \
     qml/ImageButton.qml
                
+
+DISTFILES += \
+    qml/RoundImage.qml
 
 

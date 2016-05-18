@@ -7,7 +7,7 @@
 #include <QJsonArray>
 #include <QDebug>
 #define CHANNEL_REQUEST "https://www.douban.com/j/app/radio/channels"
-#define MUSIC_REQUEST "https://www.douban.com/j/app/radio/people?app_name=radio_android&version=100&type=e&channel="
+#define MUSIC_REQUEST "https://www.douban.com/j/app/radio/people?app_name=radio_android&version=100&type=b&channel="
 
 Controller::Controller()
 {
@@ -194,10 +194,11 @@ void Controller::proMusic(struMusicInfo &musicInfo,const QByteArray &buf)
 
 QVariant Controller::showMusic(int index)
 {
+    qDebug()<<Q_FUNC_INFO<<__LINE__<< "showMusic";
     switch (index) {
     case 0:
-        qDebug()<<Q_FUNC_INFO;
         return mMusicInfoStru.picture;
+        qDebug()<<"pic_url : "<<mMusicInfoStru.picture;
     case 1:
         return mMusicInfoStru.playUrl;
     case 2:
@@ -208,6 +209,7 @@ QVariant Controller::showMusic(int index)
         return mMusicInfoStru.singerId;
     case 5:
         return mMusicInfoStru.singer;
+
         qDebug()<<Q_FUNC_INFO<<mMusicInfoStru.singer;
     case 6:
         return mMusicInfoStru.albumtitle;

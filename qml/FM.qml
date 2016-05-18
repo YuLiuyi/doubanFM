@@ -3,6 +3,7 @@ import com.syberos.basewidgets 2.0
 import QtMultimedia 5.0
 import QtQuick.Controls 1.2
 import QtQuick.Dialogs 1.2
+import QtGraphicalEffects 1.0
 
 CPage {
     id: page
@@ -41,43 +42,50 @@ CPage {
             }
         }
 
-//        Image {
-//            id: play
-//            anchors.top: rect.bottom
-//            anchors.topMargin: 60
-//            width: 200
-//            anchors.horizontalCenter: parent.horizontalCenter
-//            source: picture == "" ? "qrc:/images/res/album_init.jpg":picture
-//        }
+        Image {
+            id: bg
+            anchors.fill: parent
+            source: picture == "" ? "qrc:/images/res/album_init.jpg":picture
+            visible: false
+        }
 
-        ImageButton {
-            id: play
+        FastBlur{
+            anchors.left: parent.left
+            anchors.right: parent.right
             anchors.top: rect.bottom
-            anchors.topMargin: 60
-            imageWidth:  580
-            imageHeight: 580
-            imageMargin: 40
+            anchors.bottom:parent.bottom
+            source: bg
+            radius: 70
+        }
+
+        RoundImage{
+            id:play
+            anchors.top: rect.bottom
+            anchors.topMargin: 80
             anchors.horizontalCenter: parent.horizontalCenter
-            source1: /*"qrc:/images/res/album_init.jpg"*/picture
-            source2: picture
-            onClicked: {
-                if (mediaPlayer.playbackState==MediaPlayer.PlayingState) {
-                    mediaPlayer.pause();
-                }
-                mediaPlayer.play();
-            }
+            //anchors.fill: parent;
+            width:400
+            height:400
+            source: picture == "" ? "qrc:/images/res/album_init.jpg":picture
+            color:"lightblue"
+            border:5
         }
 
         Text {
             id: sname
             color: "#000000"
+            //            width: 200
             anchors.top: play.bottom
-            anchors.topMargin: 15
+            anchors.topMargin: 100
             anchors.horizontalCenter: parent.horizontalCenter
             font.pixelSize: 50
             text: title
+            elide: Text.ElideMiddle
+            maximumLineCount: 1
+            //            wrapMode: Text.WordWrap
             font.family: "Courier New"
         }
+
 
         Text {
             id: song
@@ -104,6 +112,7 @@ CPage {
                 height: 80
                 anchors.verticalCenter: parent.verticalCenter
                 source: "qrc:/images/res/unlike.png"
+
 
                 MouseArea {
                     anchors.fill: parent
@@ -144,103 +153,103 @@ CPage {
                 }
             }
         }
-    }
 
-    Connections {
-        target: contrl
-        onFreshFinished: {
-            console.log("next playUrl = "+ playUrl)
-            picture = contrl.showMusic(0);
-            playUrl = contrl.showMusic(1);
-            title = contrl.showMusic(2);
-            public_time = contrl.showMusic(3);
-            singerId = contrl.showMusic(4);
-            singer = contrl.showMusic(5);
-            albumtitle = contrl.showMusic(6);
-            ssid = contrl.showMusic(7);
-            like = contrl.showMusic(8);
-            mediaPlayer.play()
-        }
-    }
-
-    MediaPlayer {
-        id: mediaPlayer
-        autoPlay: true
-        source: playUrl       
-    }
-
-    CDialog {
-        id: infoDialog
-        anchors.left: parent.left
-        anchors.right: parent.right
-        titleText: "详细信息"
-        messageAreaComponent: Component {
-            Rectangle {
-                //id: infoBG
-                height: 200
-                anchors.left: parent.left
-                anchors.right: parent.right
-                anchors.bottom: parent.bottom
-                color: "white"
-                visible: true
-
-                Column {
-                    //id: taginfo
-                    anchors.fill: parent
-                    spacing: 10
-                    Text {
-                        anchors.left: parent.left
-                        anchors.leftMargin: 10
-                        text : singer == "" ? "歌手: "+"未知" : "歌手: "+singer
-                        font.pixelSize: 30
-                        color: "#625353"
-                    }
-                    Text {
-                        anchors.left: parent.left
-                        anchors.leftMargin: 10
-                        text : albumtitle == "" ? "专辑: "+"未知" : "专辑: "+albumtitle
-                        font.pixelSize: 30
-                        color: "#625353"
-                    }
-                    Text {
-                        anchors.left: parent.left
-                        anchors.leftMargin: 10
-                        text : public_time == "" ? "发行时间: "+"未知" : "发行时间: "+public_time
-                        font.pixelSize: 30
-                        color: "#625353"
-                    }
-                }
+        Connections {
+            target: contrl
+            onFreshFinished: {
+                console.log("next playUrl = "+ playUrl)
+                picture = contrl.showMusic(0);
+                playUrl = contrl.showMusic(1);
+                title = contrl.showMusic(2);
+                public_time = contrl.showMusic(3);
+                singerId = contrl.showMusic(4);
+                singer = contrl.showMusic(5);
+                albumtitle = contrl.showMusic(6);
+                //            ssid = contrl.showMusic(7);
+                like = contrl.showMusic(8);
+                mediaPlayer.play()
             }
         }
 
-        buttonAreaComponent: Component {
-            CButton {
-                width: 650
-                height: 95
-                text: "知道了"
-                onClicked: {
-                    infoDialog.hide();
-                }
-            }
+        MediaPlayer {
+            id: mediaPlayer
+            autoPlay: true
+            source: playUrl
         }
-    }
 
-    //-----------------------duration--------------------------------------
-    Rectangle {
-        id: progressBar
-        anchors.left: parent.left
-        anchors.right: parent.right
-        anchors.bottom: parent.bottom
-        anchors.bottomMargin:40
-        height: 20
-        color: "#cad5d2"
-
-        Rectangle {
+        CDialog {
+            id: infoDialog
             anchors.left: parent.left
-            anchors.top: parent.top
+            anchors.right: parent.right
+            titleText: "详细信息"
+            messageAreaComponent: Component {
+                Rectangle {
+                    //id: infoBG
+                    height: 200
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    anchors.bottom: parent.bottom
+                    color: "white"
+                    visible: true
+
+                    Column {
+                        //id: taginfo
+                        anchors.fill: parent
+                        spacing: 10
+                        Text {
+                            anchors.left: parent.left
+                            anchors.leftMargin: 10
+                            text : singer == "" ? "歌手: "+"未知" : "歌手: "+singer
+                            font.pixelSize: 30
+                            color: "#625353"
+                        }
+                        Text {
+                            anchors.left: parent.left
+                            anchors.leftMargin: 10
+                            text : albumtitle == "" ? "专辑: "+"未知" : "专辑: "+albumtitle
+                            font.pixelSize: 30
+                            color: "#625353"
+                        }
+                        Text {
+                            anchors.left: parent.left
+                            anchors.leftMargin: 10
+                            text : public_time == "" ? "发行时间: "+"未知" : "发行时间: "+public_time
+                            font.pixelSize: 30
+                            color: "#625353"
+                        }
+                    }
+                }
+            }
+
+            buttonAreaComponent: Component {
+                CButton {
+                    width: 650
+                    height: 95
+                    text: "知道了"
+                    onClicked: {
+                        infoDialog.hide();
+                    }
+                }
+            }
+        }
+
+        //-----------------------duration--------------------------------------
+        Rectangle {
+            id: progressBar
+            anchors.left: parent.left
+            anchors.right: parent.right
             anchors.bottom: parent.bottom
-            width: player.duration > 0 ? parent.width * player.position / player.duration : 0
-            color: "#699169"
+            anchors.bottomMargin:40
+            height: 20
+            color: "#cad5d2"
+
+            Rectangle {
+                anchors.left: parent.left
+                anchors.top: parent.top
+                anchors.bottom: parent.bottom
+                width: player.duration() > 0 ? parent.width * player.position / player.duration() : 0
+                color: "#699169"
+            }
         }
     }
 }

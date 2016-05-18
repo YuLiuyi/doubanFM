@@ -8,7 +8,7 @@ class MusicPlayer : public QObject
 {
     Q_OBJECT
 
-    Q_PROPERTY(int duration READ duration NOTIFY durationChanged)
+    Q_PROPERTY(int duration READ duration)
     Q_PROPERTY(qint64 position READ position NOTIFY positionChanged)
     Q_PROPERTY(QMediaPlayer::State state READ state NOTIFY stateChanged)
     Q_PROPERTY(QMediaPlayer::MediaStatus mediaStatus READ mediaStatus NOTIFY mediaStatusChanged)
@@ -42,7 +42,6 @@ public:
 
 signals:
     void positionChanged(qint64);
-    void durationChanged(qint64);
     void stateChanged(QMediaPlayer::State);
     void mediaStatusChanged(QMediaPlayer::MediaStatus);
     void volumeChanged(int);
@@ -53,7 +52,6 @@ signals:
 
 public slots:
     void handlePositionChanged(qint64 position);
-    void handleDurationChanged(qint64 duration);
     void handleStateChanged(QMediaPlayer::State);
     void handleMediaStatusChanged(QMediaPlayer::MediaStatus);
     void setPlaylist(QMediaPlaylist *playlist);
