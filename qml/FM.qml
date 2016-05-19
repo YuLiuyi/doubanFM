@@ -25,28 +25,41 @@ CPage {
 
     contentAreaItem: Item {
 
-//        MusicPlayer {
-//            id: player
-//            onPositionChanged: {
-////                console.log("position = "+ position)
-//                console.log("duration = "+ player.duration)
-////                if(duration == -1) {
-////                    gToast.requestToast("play failed!")
-////                }
-//            }
-//            onMediaStatusChanged: {
-//                console.log("status = " + status)
-//                if(player.mediaStatus == 7) {
-//                    console.log("next playUrl = "+ playUrl)
-////                    page.next()
-//                    contrl.getMusicReq(cid,sid,true)
-//                    page.next()
-//                    player.mplay(playUrl)
-//                }
-//            }
-//        }
         Component.onCompleted: {
             player.mplay(playUrl)
+        }
+
+        Connections {
+            target: player
+            onStateChanged : {
+                console.log("status = " + player.mediaStatus)
+                if(player.mediaStatus == 7) {
+                    console.log("next playUrl = "+ playUrl)
+                    //                    page.next()
+                    contrl.getMusicReq(cid,sid,true)
+                    page.next()
+                    player.mplay(playUrl)
+                }
+            }
+        }
+
+        Connections {
+            target: contrl
+            onFreshFinished: {
+                console.log("next playUrl = "+ playUrl)
+                //                picture = contrl.showMusic(0);
+                //                playUrl = contrl.showMusic(1);
+                //                title = contrl.showMusic(2);
+                //                public_time = contrl.showMusic(3);
+                //                singerId = contrl.showMusic(4);
+                //                singer = contrl.showMusic(5);
+                //                albumtitle = contrl.showMusic(6);
+                //                //            ssid = contrl.showMusic(7);
+                //                like = contrl.showMusic(8);
+                //
+                page.next()
+                player.mplay(playUrl)
+            }
         }
 
         Image {
@@ -104,27 +117,27 @@ CPage {
         }
 
         Text {
-                id: sname
-                text: title
-                color: "#000000"
-                font.family: "Courier New"
-                font.pixelSize: 50
-                anchors.top: play.bottom
-                anchors.topMargin: 100
-//                width: 200
-//                anchors.horizontalCenter: parent.horizontalCenter
-                PropertyAnimation on x {
-                    id: animation
-//                    running: animationRunning
-                    from: 405
-                    to:(0-sname.text.length*sname.font.pixelSize)+200;
-                    duration: 1000*4
-                    loops: Animation.Infinite
-                    onStopped:{
-                        animation.start()
-                    }
+            id: sname
+            text: title
+            color: "#000000"
+            font.family: "Courier New"
+            font.pixelSize: 50
+            anchors.top: play.bottom
+            anchors.topMargin: 100
+            //                width: 200
+            //                anchors.horizontalCenter: parent.horizontalCenter
+            PropertyAnimation on x {
+                id: animation
+                //                    running: animationRunning
+                from: 405
+                to:(0-sname.text.length*sname.font.pixelSize)+200;
+                duration: 1000*4
+                loops: Animation.Infinite
+                onStopped:{
+                    animation.start()
                 }
             }
+        }
 
 
         Text {
@@ -166,18 +179,18 @@ CPage {
                 width:  80
                 height: 80
                 anchors.verticalCenter: parent.verticalCenter
-                source: "qrc:/images/res/play_2.png"
+                source: player.state == MediaPlayer.PlayingState?"qrc:/images/res/play_2.png": "qrc:/images/res/pause_2.png"
                 MouseArea {
                     anchors.fill: parent
                     onClicked: {
-//                        if(mediaPlayer.playbackState == mediaPlayer.PlayingState)
-//                        {
-//                            console.log("state = "+ mediaPlayer.playbackState)
-//                            mediaPlayer.pause()
-//                        } else {
-//                            console.log("state = "+ mediaPlayer.playbackState)
-//                            mediaPlayer.play()
-//                        }
+                        if(player.state == MediaPlayer.PlayingState)
+                        {
+                            console.log("state = "+ player.state)
+                            player.pause()
+                        } else {
+                            console.log("state = "+ player.state)
+                            player.play()
+                        }
                     }
                 }
             }
@@ -195,25 +208,6 @@ CPage {
                         contrl.getMusicReq(cid,sid,true)
                     }
                 }
-            }
-        }
-
-        Connections {
-            target: contrl
-            onFreshFinished: {
-                console.log("next playUrl = "+ playUrl)
-//                picture = contrl.showMusic(0);
-//                playUrl = contrl.showMusic(1);
-//                title = contrl.showMusic(2);
-//                public_time = contrl.showMusic(3);
-//                singerId = contrl.showMusic(4);
-//                singer = contrl.showMusic(5);
-//                albumtitle = contrl.showMusic(6);
-//                //            ssid = contrl.showMusic(7);
-//                like = contrl.showMusic(8);
-//
-                page.next()
-                player.mplay(playUrl)
             }
         }
 
@@ -302,6 +296,6 @@ CPage {
         singer = contrl.showMusic(5);
         albumtitle = contrl.showMusic(6);
         //            ssid = contrl.showMusic(7);
-//                    like = contrl.showMusic(8);
+        //                    like = contrl.showMusic(8);
     }
 }
