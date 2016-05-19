@@ -10,7 +10,7 @@ RESOURCES += res.qrc
 
 CONFIG += link_pkgconfig
 
-PKGCONFIG += syberos-application syberos-application-cache
+PKGCONFIG += syberos-application syberos-application-cache syberos-qt-system
 
 # This is needed for using syberos-application and syberos-qt module
 INCLUDEPATH += $$[QT_INSTALL_HEADERS]/../syberos_application \
@@ -69,7 +69,6 @@ INSTALLS += target res meta syber
 QML_FILES = qml/*.qml
 
 OTHER_FILES += $$QML_FILES *.qm \
-    qml/FM.qml \
     qml/ImageButton.qml
                
 

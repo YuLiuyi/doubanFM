@@ -1,7 +1,6 @@
 <RCC>
     <qresource prefix="/">
         <file>qml/main.qml</file>
-        <file>qml/FM.qml</file>
         <file>qml/ImageButton.qml</file>
         <file>qml/RoundImage.qml</file>
     </qresource>
@@ -40,5 +39,6 @@
         <file>res/pause.svg</file>
         <file>res/play_2.png</file>
         <file>res/pause_2.png</file>
+        <file>res/panel-playList_b.png</file>
     </qresource>
 </RCC>

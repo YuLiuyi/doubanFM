@@ -19,6 +19,7 @@ MusicPlayer::MusicPlayer(QObject *parent) :
 
     connect(m_mediaPlayer, SIGNAL(mediaStatusChanged(QMediaPlayer::MediaStatus)),
             this, SIGNAL(mediaStatusChanged(QMediaPlayer::MediaStatus)));
+
     setVolume(30);
 
 }
@@ -86,6 +87,18 @@ void MusicPlayer::handlePositionChanged(qint64 position)
 
 void MusicPlayer::handleStateChanged(QMediaPlayer::State state)
 {
+    qDebug() << Q_FUNC_INFO;
+    switch (state) {
+    case QMediaPlayer::PlayingState:
+        mPowerManager.accquireWakelock();
+        break;
+    case QMediaPlayer::PausedState:
+    case QMediaPlayer::StoppedState:
+        mPowerManager.releaseWakelock();
+        break;
+    default:
+        break;
+    }
     emit stateChanged(state);
 }
 void MusicPlayer::handleDurationChanged(qint64 duration)

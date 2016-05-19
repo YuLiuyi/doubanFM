@@ -3,6 +3,7 @@
 
 #include <QMediaPlayer>
 #include <QObject>
+#include "csystempowermanager.h"
 
 class MusicPlayer : public QObject
 {
@@ -60,6 +61,7 @@ public slots:
 
 private:
     QMediaPlayer *m_mediaPlayer;
+    CSystemPowerManager mPowerManager;
 };
 
 #endif // MUSICPLAYER_H

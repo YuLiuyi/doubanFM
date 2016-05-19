@@ -1,33 +1,83 @@
 import QtQuick 2.0
 import com.syberos.basewidgets 2.0
+import QtMultimedia 5.0
+import QtQuick.Controls 1.2
+import QtQuick.Dialogs 1.2
+import QtGraphicalEffects 1.0
 
 CPageStackWindow {
     initialPage:CPage{
-
-        property int c_index: 0
-        property string cid: ""
-        property string sid: ""
-
         id: mainPg
+        //
+        property int c_index: 0
+        property string cid: "4"
+        property string sid: "3"
+
+        //
+        property string channelName: "八零"
+        property string picture: ""//
+        property string playUrl: ""
+        property string title: ""
+        property string public_time: ""
+        property string singerId : ""
+        property string singer :""
+        property string albumtitle:""
+        property int ssid :0
+        property int like: 0
+
         anchors.fill: parent
         color: "#e2dbdb"
         Component.onCompleted: {
             console.log("component completed.")
             contrl.getChannelInfoReq();
+            contrl.getMusicReq(cid,sid,true)
+        }
+        Connections{
+            target: contrl
+            onGetInfoFinished :{
+                console.log("getInfofinished");
+                console.log("playUrl = "+contrl.showMusic(1))
+//                mainPg.show()
+                mainPg.picture = contrl.showMusic(0);
+                mainPg.playUrl = contrl.showMusic(1);
+                mainPg.title = contrl.showMusic(2);
+                mainPg.public_time = contrl.showMusic(3);
+                mainPg.singerId = contrl.showMusic(4);
+                mainPg.singer = contrl.showMusic(5);
+                mainPg.albumtitle = contrl.showMusic(6);
+                player.mplay(mainPg.playUrl)
+            }
+            onFreshFinished: {
+                console.log("show playUrl = "+ mainPg.playUrl)
+//                mainPg.show()
+                mainPg.picture = contrl.showMusic(0);
+                mainPg.playUrl = contrl.showMusic(1);
+                mainPg.title = contrl.showMusic(2);
+                mainPg.public_time = contrl.showMusic(3);
+                mainPg.singerId = contrl.showMusic(4);
+                mainPg.singer = contrl.showMusic(5);
+                mainPg.albumtitle = contrl.showMusic(6);
+                player.mplay(mainPg.playUrl)
+            }
         }
 
-        Image {
-            id: list
-            source: "qrc:/images/res/arrow_right_clicked.png"
-            anchors.top: parent.top
-            anchors.left: parent.left
-            anchors.leftMargin: 20
-            width: 40
-            height: 45
-            MouseArea{
-                anchors.fill: parent
-                onClicked: {
-                    channel.visible = true
+        Connections {
+            target: player
+            onStateChanged : {
+                console.log("status = " + player.mediaStatus)
+                if(player.mediaStatus == 7) {
+                    console.log("show playUrl = "+ mainPg.playUrl)
+                    //                    page.show()
+                    contrl.getMusicReq(mainPg.cid,mainPg.sid,true)
+//                    mainPg.show()
+//                    mainPg.picture = contrl.showMusic(0);
+//                    mainPg.playUrl = contrl.showMusic(1);
+//                    mainPg.title = contrl.showMusic(2);
+//                    mainPg.public_time = contrl.showMusic(3);
+//                    mainPg.singerId = contrl.showMusic(4);
+//                    mainPg.singer = contrl.showMusic(5);
+//                    mainPg.albumtitle = contrl.showMusic(6);
+//                    player.mplay(playUrl)
                 }
             }
         }
@@ -39,6 +89,28 @@ CPageStackWindow {
             width: parent.width
             height: 60
             color: "#000000"
+            Image {
+                id: list
+                source: "qrc:/images/res/panel-playList_b.png"
+                anchors.bottom: parent.bottom
+                anchors.left: parent.left
+                anchors.leftMargin: 40
+                width: 40
+                height: 45
+                MouseArea{
+                    anchors.fill: parent
+                    onClicked: {
+                        console.log("channel.visible :"+channel.visible)
+                        if(channel.visible) {
+                           channel.visible = false
+                            mainpage.visible = true
+                        } else {
+                            channel.visible = true
+                            mainpage.visible = false
+                        }
+                    }
+                }
+            }
             Text {
                 color: "#ffffff"
                 anchors {
@@ -58,10 +130,13 @@ CPageStackWindow {
             anchors.right: parent.right
             anchors.top: rect.bottom
             anchors.bottom: parent.bottom
-//            visible: false
+            visible: false
 
             ListView {
                 id: view
+//                anchors.left: parent.left
+//                anchors.top: parent.top
+//                width: parent.width/2
                 anchors.fill: parent
                 model: channelListModel
                 clip: true
@@ -70,6 +145,8 @@ CPageStackWindow {
                     id: _delegate
                     width: view.width
                     height: 80
+                    color: "#030202"
+                    opacity: 0.5
 
                     Rectangle {
                         id: decorateLine
@@ -82,7 +159,6 @@ CPageStackWindow {
                         anchors.rightMargin: 40
                     }
 
-
                     Text {
                         id: titleTxtInfo
                         anchors.left: parent.left
@@ -91,7 +167,7 @@ CPageStackWindow {
                         anchors.verticalCenter: parent.verticalCenter
                         text:  name + " MHz"
                         font.family: "汉仪宋体"
-                        color: "#7a5555"
+                        color: "#fff"
                         font.pixelSize:  30
                         elide: Text.ElideRight
                         verticalAlignment: Text.AlignVCenter
@@ -102,42 +178,248 @@ CPageStackWindow {
                         onClicked: {
                             mainPg.c_index = index
                             mainPg.cid = channelListModel.getChannel_id(index);
+                            console.log("channelId = "+mainPg.cid+",,,index = "+index)
+                            mainPg.channelName = titleTxtInfo.text
+                            console.log("channel.name ="+ mainPg.channelName)
                             mainPg.sid = channelListModel.getSeq_id(index);
                             contrl.getMusicReq(mainPg.cid, mainPg.sid, false)
+                            mainpage.visible = true
+                            channel.visible = false
                         }
                     }
-                }
-            }
-
-            Connections{
-                target: contrl
-                onGetInfoFinished :{
-                    console.log("getInfofinished");
-                    console.log("playUrl = "+contrl.showMusic(1))
-
-                    //                var picture = contrl.showMusic(0);
-                    //                var playUrl = contrl.showMusic(1);
-                    //                var title = contrl.showMusic(2);
-                    //                var public_time = contrl.showMusic(3);
-                    //                var singerId = contrl.showMusic(4);
-                    //                var singer = contrl.showMusic(5);
-                    //                var albumtitle = contrl.showMusic(6);
-                    //                var ssid = contrl.showMusic(7);
-                    //                var like = contrl.showMusic(8);
-                    pageStack.push("qrc:///qml/FM.qml",
-                                   {channelName: channelListModel.getName(mainPg.c_index),
-                                       picture: contrl.showMusic(0), playUrl: contrl.showMusic(1), title: contrl.showMusic(2),
-                                       public_time: contrl.showMusic(3),singerId: contrl.showMusic(4), singer: contrl.showMusic(5),
-                                       albumtitle: contrl.showMusic(6), ssid:contrl.showMusic(7),
-                                       like: contrl.showMusic(8), cid: mainPg.cid, sid: mainPg.sid});
                 }
             }
         }
 
         Item {
             id: mainpage
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.top: rect.bottom
+            anchors.bottom: parent.bottom
 
+            Image {
+                id: bg
+                anchors.fill: parent
+                source: mainPg.picture == "" ? "qrc:/images/res/album_init.jpg":mainPg.picture
+                visible: false
+            }
+
+            FastBlur{
+                anchors.fill: parent
+                source: bg
+                radius: 80
+            }
+
+
+            Text {
+                id: channel_name
+                color: "#5a3939"
+                anchors.top: parent.top
+                anchors.topMargin: 40
+                anchors.horizontalCenter: parent.horizontalCenter
+                font.pixelSize: 50
+                font.bold: true
+                text:"--  "+ mainPg.channelName+"  --"
+            }
+
+            RoundImage{
+                id: play
+                anchors.top: channel_name.bottom
+                anchors.topMargin: 40
+                anchors.horizontalCenter: parent.horizontalCenter
+                //anchors.fill: parent;
+                width: 450
+                height: 450
+                source: mainPg.picture == "" ? "qrc:/images/res/album_init.jpg":mainPg.picture
+                color:"lightblue"
+                border:5
+            }
+
+            Text {
+                id: sname
+                text: mainPg.title
+                color: "#000000"
+                font.family: "Courier New"
+                font.pixelSize: 50
+                anchors.top: play.bottom
+                anchors.topMargin: 100
+                //                width: 200
+                //                anchors.horizontalCenter: parent.horizontalCenter
+                PropertyAnimation on x {
+                    id: animation
+                    //                    running: animationRunning
+                    from: 405
+                    to:(0-sname.text.length*sname.font.pixelSize)+200;
+                    duration: 1000*4
+                    loops: Animation.Infinite
+                    onStopped:{
+                        animation.start()
+                    }
+                }
+            }
+
+
+            Text {
+                id: song
+                color: "#696161"
+                anchors.top: sname.bottom
+                anchors.topMargin: 10
+                anchors.horizontalCenter: parent.horizontalCenter
+                font.pixelSize: 30
+                text: mainPg.singer
+                font.family: "Courier New"
+            }
+
+            //-------------------控制按钮---------------------------------------
+            Row {
+                id: ctlpanel
+                anchors.top: song.bottom
+                anchors.topMargin: 60
+                spacing: 100
+                anchors.horizontalCenter: parent.horizontalCenter
+
+                Image {
+                    id: more
+                    width:  80
+                    height: 80
+                    anchors.verticalCenter: parent.verticalCenter
+                    source: "qrc:/images/res/playlist_more.png"
+                    MouseArea{
+                        anchors.fill: parent
+                        onClicked: {
+                            //get more info
+                            infoDialog.show()
+                        }
+                    }
+                }
+
+                Image {
+                    id: playorpause
+                    width:  80
+                    height: 80
+                    anchors.verticalCenter: parent.verticalCenter
+                    source: player.state == MediaPlayer.PlayingState?"qrc:/images/res/pause_2.png": "qrc:/images/res/play_2.png"
+                    MouseArea {
+                        anchors.fill: parent
+                        onClicked: {
+                            if(player.state == MediaPlayer.PlayingState)
+                            {
+                                console.log("state = "+ player.state)
+                                player.pause()
+                            } else {
+                                console.log("state = "+ player.state)
+                                player.play()
+                            }
+                        }
+                    }
+                }
+
+                Image {
+                    id: next
+                    width:  80
+                    height: 70
+                    anchors.verticalCenter: parent.verticalCenter
+                    source: "qrc:/images/res/next_clicked.png"
+                    MouseArea {
+                        anchors.fill: parent
+                        onClicked: {
+                            console.log("next")
+                            contrl.getMusicReq(mainPg.cid,mainPg.sid,true)
+//                            mainPg.show()
+
+//                            player.mplay(playUrl)
+                        }
+                    }
+                }
+            }
+
+            CDialog {
+                id: infoDialog
+                anchors.left: parent.left
+                anchors.right: parent.right
+                titleText: "详细信息"
+                messageAreaComponent: Component {
+                    Rectangle {
+                        //id: infoBG
+                        height: 200
+                        anchors.left: parent.left
+                        anchors.right: parent.right
+                        anchors.bottom: parent.bottom
+                        color: "white"
+                        visible: true
+
+                        Column {
+                            //id: taginfo
+                            anchors.fill: parent
+                            spacing: 10
+                            Text {
+                                anchors.left: parent.left
+                                anchors.leftMargin: 10
+                                text : mainPg.singer == "" ? "歌手: "+"未知" : "歌手: "+mainPg.singer
+                                font.pixelSize: 30
+                                color: "#625353"
+                            }
+                            Text {
+                                anchors.left: parent.left
+                                anchors.leftMargin: 10
+                                text : mainPg.albumtitle == "" ? "专辑: "+"未知" : "专辑: "+mainPg.albumtitle
+                                font.pixelSize: 30
+                                color: "#625353"
+                            }
+                            Text {
+                                anchors.left: parent.left
+                                anchors.leftMargin: 10
+                                text : mainPg.public_time == "" ? "发行时间: "+"未知" : "发行时间: "+mainPg.public_time
+                                font.pixelSize: 30
+                                color: "#625353"
+                            }
+                        }
+                    }
+                }
+
+                buttonAreaComponent: Component {
+                    CButton {
+                        width: 650
+                        height: 95
+                        text: "知道了"
+                        onClicked: {
+                            infoDialog.hide();
+                        }
+                    }
+                }
+            }
+
+            //-----------------------duration--------------------------------------
+            Rectangle {
+                id: progressBar
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.bottom: parent.bottom
+                anchors.bottomMargin:40
+                height: 20
+                color: "#cad5d2"
+
+                Rectangle {
+                    anchors.left: parent.left
+                    anchors.top: parent.top
+                    anchors.bottom: parent.bottom
+                    width: player.duration> 0 ? parent.width * player.position / player.duration: 0
+                    color: "#699169"
+                }
+            }
         }
+    }
+    function show(){
+        mainPg.picture = contrl.showMusic(0);
+        mainPg.playUrl = contrl.showMusic(1);
+        mainPg.title = contrl.showMusic(2);
+        mainPg.public_time = contrl.showMusic(3);
+        mainPg.singerId = contrl.showMusic(4);
+        mainPg.singer = contrl.showMusic(5);
+        mainPg.albumtitle = contrl.showMusic(6);
+        //            ssid = contrl.showMusic(7);
+        //                    like = contrl.showMusic(8);
     }
 }
 
