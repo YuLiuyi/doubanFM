@@ -377,7 +377,7 @@ CPageStackWindow {
                             Text {
                                 anchors.left: parent.left
                                 anchors.leftMargin: 10
-                                text : mainPg.title == "歌名: "+mainPg.title
+                                text : "歌名: "+mainPg.title
                                 font.pixelSize: 30
                                 color: "#625353"
                             }
