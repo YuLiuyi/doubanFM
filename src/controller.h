@@ -34,17 +34,24 @@ public:
     void proMusic(struMusicInfo &musicInfo,const QByteArray &buf);
     Q_INVOKABLE QVariant showMusic(int index);
 
+    //lyric
+    Q_INVOKABLE void getLyric();
+    void proLyric(const QByteArray &buf);
 
 signals:
     void channelResult(ChannelList list);
     void getInfoFinished();
     void freshFinished();
+    void error(QString s);
 
 private slots:
     //channel
     void channelInfoReqFinished();
     //music
     void musicReqFinished();
+
+    //lyric
+    void lyricReqFinished();
 
     void error(QNetworkReply::NetworkError error);
 
@@ -55,6 +62,9 @@ private:
     QNetworkReply          *mMusicReply;
     struMusicInfo          mMusicInfoStru;
     bool                   mIsNext;
+    QNetworkReply          *mLyricReply;
+    QString                mSongid;
+    QString                mSsid;
 
 };
 

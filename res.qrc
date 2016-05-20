@@ -40,5 +40,6 @@
         <file>res/play_2.png</file>
         <file>res/pause_2.png</file>
         <file>res/panel-playList_b.png</file>
+        <file>res/listicon_favor.png</file>
     </qresource>
 </RCC>

@@ -26,7 +26,7 @@ CPageStackWindow {
         property int like: 0
 
         anchors.fill: parent
-        color: "#e2dbdb"
+        color: "#000"
         Component.onCompleted: {
             console.log("component completed.")
             contrl.getChannelInfoReq();
@@ -58,6 +58,10 @@ CPageStackWindow {
                 mainPg.singer = contrl.showMusic(5);
                 mainPg.albumtitle = contrl.showMusic(6);
                 player.mplay(mainPg.playUrl)
+            }
+            onError: {
+                console.log("error: "+s);
+                gToast.requestToast(s);
             }
         }
 
@@ -92,7 +96,7 @@ CPageStackWindow {
             Image {
                 id: list
                 source: "qrc:/images/res/panel-playList_b.png"
-                anchors.bottom: parent.bottom
+                anchors.verticalCenter: parent.verticalCenter
                 anchors.left: parent.left
                 anchors.leftMargin: 40
                 width: 40
@@ -108,6 +112,22 @@ CPageStackWindow {
                             channel.visible = true
                             mainpage.visible = false
                         }
+                    }
+                }
+            }
+            Image {
+                id: lyric
+                source: "qrc:/images/res/listicon_favor.png"
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.right: parent.right
+                anchors.rightMargin: 40
+                width: 40
+                height: 40
+                MouseArea{
+                    anchors.fill: parent
+                    onClicked: {
+                        console.log("show lyric !!")
+                        contrl.getLyric()
                     }
                 }
             }
@@ -145,13 +165,14 @@ CPageStackWindow {
                     id: _delegate
                     width: view.width
                     height: 80
-                    color: "#030202"
-                    opacity: 0.5
+                    color: "#fff"
+                    opacity: 0.2
 
                     Rectangle {
                         id: decorateLine
                         color: gUiConst.getValue("CL1")
-                        height: 2
+                        height: 1
+                        opacity: 0.5
                         anchors.bottom: parent.bottom
                         anchors.left: parent.left
                         anchors.leftMargin: 40
@@ -167,7 +188,7 @@ CPageStackWindow {
                         anchors.verticalCenter: parent.verticalCenter
                         text:  name + " MHz"
                         font.family: "汉仪宋体"
-                        color: "#fff"
+                        color: "#ffffff"
                         font.pixelSize:  30
                         elide: Text.ElideRight
                         verticalAlignment: Text.AlignVCenter
@@ -356,6 +377,13 @@ CPageStackWindow {
                             Text {
                                 anchors.left: parent.left
                                 anchors.leftMargin: 10
+                                text : mainPg.title == "歌名: "+mainPg.title
+                                font.pixelSize: 30
+                                color: "#625353"
+                            }
+                            Text {
+                                anchors.left: parent.left
+                                anchors.leftMargin: 10
                                 text : mainPg.singer == "" ? "歌手: "+"未知" : "歌手: "+mainPg.singer
                                 font.pixelSize: 30
                                 color: "#625353"
@@ -397,7 +425,7 @@ CPageStackWindow {
                 anchors.right: parent.right
                 anchors.bottom: parent.bottom
                 anchors.bottomMargin:40
-                height: 20
+                height: 15
                 color: "#cad5d2"
 
                 Rectangle {
@@ -408,8 +436,53 @@ CPageStackWindow {
                     color: "#699169"
                 }
             }
+            Rectangle {
+                id: showDuration
+                anchors.top: progressBar.bottom
+                anchors.bottom: parent.bottom
+                color: "#000"
+                width: parent.width
+                Text {
+                    anchors.left: parent.left
+                    anchors.leftMargin: 30
+                    anchors.verticalCenter: parent.verticalCenter
+                    text : getTime(player.position)
+                    font.pixelSize: 20
+                    color: "#fff"
+                }
+
+                Text {
+                    anchors.right: parent.right
+                    anchors.rightMargin: 30
+                    anchors.verticalCenter: parent.verticalCenter
+                    text : getTime(player.duration)
+                    font.pixelSize: 20
+                    color: "#fff"
+                }
+            }
         }
     }
+
+    function getTime(n) {
+
+        var minute = parseInt(((n/1000).toFixed(0)) / 60);
+        //        console.log("minute111 = " + ((n/1000).toFixed(0)) / 60);
+        //        console.log("minute = " + minute);
+        var second = ((n/1000).toFixed(0)) % 60;
+        //        console.log("second = " + second);
+        if(minute < 10) {
+            minute = "0" + minute;
+            //            console.log("minute = " + minute);
+        }
+        if(second < 10) {
+            second = "0" + second;
+            //            console.log("second = " + second);
+        }
+        var m = minute + ":" + second;
+        //        console.log("m = " + m);
+        return m;
+    }
+
     function show(){
         mainPg.picture = contrl.showMusic(0);
         mainPg.playUrl = contrl.showMusic(1);

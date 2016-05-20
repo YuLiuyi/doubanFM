@@ -6,8 +6,10 @@
 #include <QJsonObject>
 #include <QJsonArray>
 #include <QDebug>
+#include <QUrlQuery>
 #define CHANNEL_REQUEST "https://www.douban.com/j/app/radio/channels"
 #define MUSIC_REQUEST "https://www.douban.com/j/app/radio/people?app_name=radio_android&version=100&type=b&channel="
+#define LYRIC_REQUEST "http://api.douban.com/v2/fm/lyric"
 
 Controller::Controller()
 {
@@ -33,10 +35,17 @@ void Controller::channelInfoReqFinished()
     int ret = mChannelInfoReply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
     qDebug() << Q_FUNC_INFO<<"ret===" << ret;
 
-    QByteArray getBuf = mChannelInfoReply->readAll();
-    qDebug() << Q_FUNC_INFO << "getbuf = " << getBuf;
+    if(200 == ret) {
+        QByteArray getBuf = mChannelInfoReply->readAll();
+        qDebug() << Q_FUNC_INFO << "getbuf = " << getBuf;
 
-    proChannelInfo(getBuf);
+        proChannelInfo(getBuf);
+
+    } else {
+        qDebug() << Q_FUNC_INFO <<__LINE__<<"error";
+        emit error("get channel failed!");
+    }
+
 
     mChannelInfoReply->deleteLater();
 
@@ -59,11 +68,11 @@ void Controller::proChannelInfo(const QByteArray &buf)
             QJsonObject obj = json.object();
             if(obj.contains("channels")) {
 
-                qDebug() << "======================channels:"<<obj.value("channels");
+                //                qDebug() << "======================channels:"<<obj.value("channels");
 
                 QJsonArray jsonArray = obj["channels"].toArray();
 
-                qDebug() << "======================jsonArray:"<<jsonArray.size();
+                //                qDebug() << "======================jsonArray:"<<jsonArray.size();
 
                 if(jsonArray.size() == 0)
                 {
@@ -75,11 +84,11 @@ void Controller::proChannelInfo(const QByteArray &buf)
                     foreach (const QJsonValue & value, jsonArray)
                     {
                         QJsonObject obj = value.toObject();
-                        qDebug() << "======================seq_id:" << obj["seq_id"].toInt();
+                        //                        qDebug() << "======================seq_id:" << obj["seq_id"].toInt();
                         seq_id = obj["seq_id"].toInt();
-                        qDebug() << "======================name:" << obj["name"].toString();
+                        //                        qDebug() << "======================name:" << obj["name"].toString();
                         name = obj["name"].toString();
-                        qDebug() << "=====================channel_id:" << obj["channel_id"].toString();
+                        //                        qDebug() << "=====================channel_id:" << obj["channel_id"].toString();
                         channel_id = obj["channel_id"].toString();
 
                         mChannelList.append(Channel(channel_id, name, seq_id));
@@ -121,15 +130,21 @@ void Controller::musicReqFinished()
     int ret = mMusicReply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
     qDebug() << Q_FUNC_INFO<<"ret===" << ret;
 
-    QByteArray getBuf = mMusicReply->readAll();
-    qDebug() << Q_FUNC_INFO << "getbuf = " << getBuf;
+    if(200 == ret) {
 
-    proMusic(mMusicInfoStru, getBuf);
+        QByteArray getBuf = mMusicReply->readAll();
+        qDebug() << Q_FUNC_INFO << "getbuf = " << getBuf;
 
-    if(mIsNext) {
-        emit freshFinished();
+        proMusic(mMusicInfoStru, getBuf);
+
+        if(mIsNext) {
+            emit freshFinished();
+        } else {
+            emit getInfoFinished();
+        }
     } else {
-        emit getInfoFinished();
+        qDebug() << Q_FUNC_INFO <<__LINE__<<"error";
+        error("get music failed!");
     }
     mMusicReply->deleteLater();
 }
@@ -139,7 +154,7 @@ void Controller::proMusic(struMusicInfo &musicInfo,const QByteArray &buf)
 
     //url:picture, string ssid, playUrl:url, string title, int like(0/1),
     //string public_time, string singers.id, string singers.name,string albumtitle
-    QString picture, playUrl, title, public_time, singerId, singer, albumtitle, ssid; int like;
+    QString picture, playUrl, title, public_time, singerId, singer, albumtitle, ssid,songid; int like;
 
     QJsonParseError jsonError;//Qt5新类
     QJsonDocument json = QJsonDocument::fromJson(buf, &jsonError);
@@ -162,7 +177,7 @@ void Controller::proMusic(struMusicInfo &musicInfo,const QByteArray &buf)
                     //                    qDebug() << "======================picture:" << obj["picture"].toString();
                     picture = obj["picture"].toString();
                     musicInfo.picture = picture;
-                    qDebug() << "======================playUrl:" << obj["url"].toString();
+                    //                    qDebug() << "======================playUrl:" << obj["url"].toString();
                     playUrl = obj["url"].toString();
                     musicInfo.playUrl = playUrl;
                     //                    qDebug() << "======================title:" << obj["title"].toString();
@@ -183,6 +198,9 @@ void Controller::proMusic(struMusicInfo &musicInfo,const QByteArray &buf)
                     //                    qDebug() << "=====================ssid:" << obj["ssid"].toString();
                     ssid = obj["ssid"].toString();
                     musicInfo.ssid = ssid;
+                    mSsid = ssid;
+                    songid = obj["sid"].toString();
+                    mSongid = songid;
                     //                    qDebug() << "=====================like:" << obj["like"].toInt();
                     like = obj["like"].toInt();
                     musicInfo.like = like;
@@ -219,6 +237,64 @@ QVariant Controller::showMusic(int index)
         return mMusicInfoStru.like;
     default:
         return QVariant();
+    }
+}
+
+void Controller::getLyric() {
+
+    qDebug() << "Going to get lyric for " << "sid = "<<mSongid << ",ssid =  " <<mSsid;
+
+    QNetworkRequest request;
+    request.setUrl(QUrl(LYRIC_REQUEST));
+    request.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
+
+    QUrlQuery postData;
+    postData.addQueryItem("sid", mSongid);
+    postData.addQueryItem("ssid", mSsid);
+
+    mLyricReply = mManager->post(request, postData.toString(QUrl::FullyEncoded).toUtf8());
+    connect(mLyricReply, SIGNAL(error(QNetworkReply::NetworkError)), this, SLOT(error(QNetworkReply::NetworkError)));
+    connect(mLyricReply, SIGNAL(finished()), this, SLOT(lyricReqFinished()));
+}
+void Controller::lyricReqFinished()
+{
+    int ret = mLyricReply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
+    qDebug() << Q_FUNC_INFO<<"ret===" << ret;
+
+    if(200 == ret) {
+
+        QByteArray getBuf = mLyricReply->readAll();
+        qDebug() << Q_FUNC_INFO << "getbuf = " << getBuf;
+
+        proLyric(getBuf);
+
+    } else {
+        qDebug() << Q_FUNC_INFO <<__LINE__<<"error";
+        error("get lyric failed!");
+    }
+
+    mLyricReply->deleteLater();
+}
+
+void Controller::proLyric(const QByteArray &buf)
+{
+
+    QJsonParseError jsonError;//Qt5新类
+    QJsonDocument json = QJsonDocument::fromJson(buf, &jsonError);
+
+    if(jsonError.error == QJsonParseError::NoError) {
+        if(json.isObject())
+        {
+            QJsonObject obj = json.object();
+            if(obj.contains("lyric")) {
+
+                qDebug() << "lyric: "<<obj.value("lyric");
+
+                //                QJsonArray jsonArray = obj["channels"].toArray();
+
+                //                qDebug() << "======================jsonArray:"<<jsonArray.size();
+            }
+        }
     }
 }
 

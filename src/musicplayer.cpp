@@ -93,10 +93,13 @@ void MusicPlayer::handleStateChanged(QMediaPlayer::State state)
     switch (state) {
     case QMediaPlayer::PlayingState:
         mPowerManager.accquireWakelock();
+        qDebug() << Q_FUNC_INFO<<__LINE__<<"state = "<< state;
         break;
     case QMediaPlayer::PausedState:
-    case QMediaPlayer::StoppedState:
         mPowerManager.releaseWakelock();
+        qDebug() << Q_FUNC_INFO<<__LINE__<<"state = "<< state;
+        break;
+    case QMediaPlayer::StoppedState:
         break;
     default:
         break;
