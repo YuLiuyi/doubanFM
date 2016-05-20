@@ -4,7 +4,7 @@
     <uses-permission syberos:name="syberos.permission.ACCESS_WIFI"/>
     <uses-sdk syberos:targetSdkVersion="" syberos:minSdkVersion=""/>
     <application syberos:debuggable="true" syberos:name="豆瓣FM" syberos:icon="res/douban.png" syberos:description="一款个性化音乐电台.">
-        <uiapp syberos:splash="" syberos:launcher="true" syberos:exec="bin/douban" syberos:background="" syberos:name="" syberos:icon="res/douban.png" syberos:id="douban">
+        <uiapp syberos:splash="" syberos:launcher="true" syberos:exec="bin/douban" syberos:background="continue" syberos:name="" syberos:icon="res/douban.png" syberos:id="douban">
             <doctype syberos:id=""/>
         </uiapp>
     </application>

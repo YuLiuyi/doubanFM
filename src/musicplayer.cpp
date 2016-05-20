@@ -16,6 +16,8 @@ MusicPlayer::MusicPlayer(QObject *parent) :
 
     connect(m_mediaPlayer, SIGNAL(stateChanged(QMediaPlayer::State)),
             this, SIGNAL(stateChanged(QMediaPlayer::State)));
+    connect(m_mediaPlayer, SIGNAL(stateChanged(QMediaPlayer::State)),
+            this, SLOT(handleStateChanged(QMediaPlayer::State)));
 
     connect(m_mediaPlayer, SIGNAL(mediaStatusChanged(QMediaPlayer::MediaStatus)),
             this, SIGNAL(mediaStatusChanged(QMediaPlayer::MediaStatus)));
