@@ -37,6 +37,7 @@ public:
     //lyric
     Q_INVOKABLE void getLyric();
     void proLyric(const QByteArray &buf);
+    Q_INVOKABLE QString showLyric();
 
 signals:
     void channelResult(ChannelList list);
@@ -65,6 +66,7 @@ private:
     QNetworkReply          *mLyricReply;
     QString                mSongid;
     QString                mSsid;
+    QString                mLyric;
 
 };
 

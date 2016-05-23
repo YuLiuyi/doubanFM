@@ -289,6 +289,7 @@ void Controller::proLyric(const QByteArray &buf)
             if(obj.contains("lyric")) {
 
                 qDebug() << "lyric: "<<obj.value("lyric");
+                mLyric = obj.value("lyric").toString();
 
                 //                QJsonArray jsonArray = obj["channels"].toArray();
 
@@ -296,6 +297,12 @@ void Controller::proLyric(const QByteArray &buf)
             }
         }
     }
+}
+
+QString Controller::showLyric(){
+
+    qDebug()<< "lyric: " << mLyric;
+    return mLyric;
 }
 
 

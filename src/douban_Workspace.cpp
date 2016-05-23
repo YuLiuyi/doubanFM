@@ -2,6 +2,7 @@
 #include <QDebug>
 #include "channelInfo.h"
 #include <QQmlContext>
+#include "lyricmodel.h"
 
 douban_Workspace::douban_Workspace()
     : CWorkspace()
@@ -19,6 +20,7 @@ douban_Workspace::douban_Workspace()
     mMediaPlayer = new MusicPlayer;
     m_view->rootContext()->setContextProperty("player", mMediaPlayer);
 //    qmlRegisterType<MusicPlayer>("MusicPlayer", 1, 0, "MusicPlayer");
+    qmlRegisterType<lyricModel>("dataModel", 1, 0, "LyricModel");
 
     m_view->setSource(QUrl("qrc:/qml/main.qml"));
     m_view->showFullScreen();

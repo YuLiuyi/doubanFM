@@ -25,10 +25,10 @@ TARGET = douban
 #Please Do not modify these macros, otherwise your app will not installed correctly and will not run at all.
 APP_DIR = /data/apps
 APP_DATA = /data/data
-INS_DIR = $$APP_DIR/com.mycompany.douban
-DATA_DIR = $$APP_DATA/com.mycompany.douban
+INS_DIR = $$APP_DIR/com.syberos.douban
+DATA_DIR = $$APP_DATA/com.syberos.douban
 
-DEFINES += SOP_ID=\\\"com.mycompany.douban\\\"
+DEFINES += SOP_ID=\\\"com.syberos.douban\\\"
 DEFINES += APP_DIR_ENVVAR=\\\"APPDIR_REGULAR\\\"
 # Currently home screen sets the environment variable, so when run from
 # elsewhere, use this work-around instead.
@@ -42,7 +42,8 @@ SOURCES += src/main.cpp \
     src/channelInfo.cpp \
     src/channelListModel.cpp \
     src/likeInfo.cpp \
-    src/likeListmodel.cpp
+    src/likeListmodel.cpp \
+    src/lyricmodel.cpp
 
 HEADERS += src/douban_Workspace.h \
     src/controller.h \
@@ -50,7 +51,8 @@ HEADERS += src/douban_Workspace.h \
     src/channelListModel.h \
     src/musicplayer.h \
     src/likeInfo.h \
-    src/likeListmodel.h
+    src/likeListmodel.h \
+    src/lyricmodel.h
 
 # Installation path
 target.path = $$INS_DIR/bin

@@ -1,4 +1,5 @@
 import QtQuick 2.0
+import dataModel 1.0
 import com.syberos.basewidgets 2.0
 import QtMultimedia 5.0
 import QtQuick.Controls 1.2
@@ -12,7 +13,6 @@ CPageStackWindow {
         property int c_index: 0
         property string cid: "4"
         property string sid: "3"
-
         //
         property string channelName: "八零"
         property string picture: ""//
@@ -24,6 +24,7 @@ CPageStackWindow {
         property string albumtitle:""
         property int ssid :0
         property int like: 0
+        property string lyric_txt: "value"
 
         anchors.fill: parent
         color: "#000"
@@ -32,12 +33,13 @@ CPageStackWindow {
             contrl.getChannelInfoReq();
             contrl.getMusicReq(cid,sid,true)
         }
+
         Connections{
             target: contrl
             onGetInfoFinished :{
                 console.log("getInfofinished");
                 console.log("playUrl = "+contrl.showMusic(1))
-//                mainPg.show()
+                //                mainPg.show()
                 mainPg.picture = contrl.showMusic(0);
                 mainPg.playUrl = contrl.showMusic(1);
                 mainPg.title = contrl.showMusic(2);
@@ -46,10 +48,11 @@ CPageStackWindow {
                 mainPg.singer = contrl.showMusic(5);
                 mainPg.albumtitle = contrl.showMusic(6);
                 player.mplay(mainPg.playUrl)
+                contrl.getLyric()
             }
             onFreshFinished: {
                 console.log("show playUrl = "+ mainPg.playUrl)
-//                mainPg.show()
+                //                mainPg.show()
                 mainPg.picture = contrl.showMusic(0);
                 mainPg.playUrl = contrl.showMusic(1);
                 mainPg.title = contrl.showMusic(2);
@@ -58,6 +61,7 @@ CPageStackWindow {
                 mainPg.singer = contrl.showMusic(5);
                 mainPg.albumtitle = contrl.showMusic(6);
                 player.mplay(mainPg.playUrl)
+                contrl.getLyric()
             }
             onError: {
                 console.log("error: "+s);
@@ -73,18 +77,75 @@ CPageStackWindow {
                     console.log("show playUrl = "+ mainPg.playUrl)
                     //                    page.show()
                     contrl.getMusicReq(mainPg.cid,mainPg.sid,true)
-//                    mainPg.show()
-//                    mainPg.picture = contrl.showMusic(0);
-//                    mainPg.playUrl = contrl.showMusic(1);
-//                    mainPg.title = contrl.showMusic(2);
-//                    mainPg.public_time = contrl.showMusic(3);
-//                    mainPg.singerId = contrl.showMusic(4);
-//                    mainPg.singer = contrl.showMusic(5);
-//                    mainPg.albumtitle = contrl.showMusic(6);
-//                    player.mplay(playUrl)
                 }
             }
         }
+
+        //        LyricModel {
+        //            id: lm
+        //            onCurrentIndexChanged: {
+        //                lyric_list.currentIndex = currentIndex;
+        //            }
+        //        }
+
+        //        ListView {
+        //            id: lyric_list
+        //            visible: false
+        //            width: parent.width
+        //            height: 210
+        //            anchors.horizontalCenter: parent.horizontalCenter
+        //            anchors.top: parent.top
+        //            anchors.topMargin: 10
+        //            clip: true
+        //            spacing: 3
+        //            highlightRangeMode: ListView.StrictlyEnforceRange
+        //            preferredHighlightBegin: 8
+        //            preferredHighlightEnd: 30
+        //            highlight: Rectangle {
+        //                color: Qt.rgba(0,0,0,0)
+        //                Behavior on y {
+        //                    SmoothedAnimation {
+        //                        duration: 300
+        //                    }
+        //                }
+        //            }
+        //            model: lm
+        //            delegate: Rectangle {
+        //                width: parent.width
+        //                height: 15
+        //                color: Qt.rgba(0,0,0,0)
+        //                Text {
+        //                    anchors.centerIn: parent
+        //                    horizontalAlignment: Text.AlignHCenter
+        //                    text: textLine
+        //                    color: "#4c4c4c"
+        //                    font.pointSize: 10
+        //                    font.bold: parent.ListView.isCurrentItem
+        //                }
+        //            }
+        //        }
+
+        Flickable {
+            width: parent.width
+            height: parent.height
+            contentWidth: parent.width+100
+            contentHeight: 2.5*parent.height
+            anchors.top: rect.bottom
+
+            Rectangle {
+                id: lyric_content
+                color: "#fff"
+                opacity: 0.2
+                visible: false
+                anchors.top: parent.top
+                anchors.topMargin: 10
+                Text {
+                    anchors.left: parent.left
+                    text: mainPg.lyric_txt==" "? "亲～我们也没有歌词哇～":mainPg.lyric_txt
+                    font.pixelSize: 30
+                    color: "#fff"
+                }
+            }}
 
         Rectangle {
             id: rect
@@ -93,31 +154,34 @@ CPageStackWindow {
             width: parent.width
             height: 60
             color: "#000000"
+
             Image {
                 id: list
-                source: "qrc:/images/res/panel-playList_b.png"
+                source: "qrc:/images/res/expanded.png"
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.left: parent.left
                 anchors.leftMargin: 40
                 width: 40
-                height: 45
+                height: 25
                 MouseArea{
                     anchors.fill: parent
                     onClicked: {
                         console.log("channel.visible :"+channel.visible)
                         if(channel.visible) {
-                           channel.visible = false
+                            channel.visible = false
                             mainpage.visible = true
                         } else {
                             channel.visible = true
+                            lyric_content.visible = false
                             mainpage.visible = false
                         }
                     }
                 }
             }
+
             Image {
                 id: lyric
-                source: "qrc:/images/res/listicon_favor.png"
+                source: "qrc:/images/res/ic_music.png"
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.right: parent.right
                 anchors.rightMargin: 40
@@ -127,10 +191,21 @@ CPageStackWindow {
                     anchors.fill: parent
                     onClicked: {
                         console.log("show lyric !!")
-                        contrl.getLyric()
+                        console.log("lyric") ;
+                        if(lyric_content.visible) {
+                            lyric_content.visible = false
+                            mainpage.visible = true
+                        } else {
+                            mainpage.visible = false
+                            channel.visible = false
+                            lyric_content.visible = true;
+                        }
+                        mainPg.lyric_txt = contrl.showLyric()
+                        console.log("qml lyric:"+mainPg.lyric_txt);
                     }
                 }
             }
+
             Text {
                 color: "#ffffff"
                 anchors {
@@ -154,9 +229,9 @@ CPageStackWindow {
 
             ListView {
                 id: view
-//                anchors.left: parent.left
-//                anchors.top: parent.top
-//                width: parent.width/2
+                //                anchors.left: parent.left
+                //                anchors.top: parent.top
+                //                width: parent.width/2
                 anchors.fill: parent
                 model: channelListModel
                 clip: true
@@ -194,6 +269,7 @@ CPageStackWindow {
                         verticalAlignment: Text.AlignVCenter
                         horizontalAlignment: Text.AlignLeft
                     }
+
                     MouseArea {
                         anchors.fill: parent
                         onClicked: {
@@ -204,8 +280,8 @@ CPageStackWindow {
                             console.log("channel.name ="+ mainPg.channelName)
                             mainPg.sid = channelListModel.getSeq_id(index);
                             contrl.getMusicReq(mainPg.cid, mainPg.sid, false)
-                            mainpage.visible = true
                             channel.visible = false
+                            mainpage.visible = true
                         }
                     }
                 }
@@ -347,9 +423,9 @@ CPageStackWindow {
                         onClicked: {
                             console.log("next")
                             contrl.getMusicReq(mainPg.cid,mainPg.sid,true)
-//                            mainPg.show()
+                            //                            mainPg.show()
 
-//                            player.mplay(playUrl)
+                            //                            player.mplay(playUrl)
                         }
                     }
                 }
