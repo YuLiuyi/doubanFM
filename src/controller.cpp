@@ -7,6 +7,7 @@
 #include <QJsonArray>
 #include <QDebug>
 #include <QUrlQuery>
+#include <QRegularExpression>
 #define CHANNEL_REQUEST "https://www.douban.com/j/app/radio/channels"
 #define MUSIC_REQUEST "https://www.douban.com/j/app/radio/people?app_name=radio_android&version=100&type=b&channel="
 #define LYRIC_REQUEST "http://api.douban.com/v2/fm/lyric"
@@ -302,6 +303,7 @@ void Controller::proLyric(const QByteArray &buf)
 QString Controller::showLyric(){
 
     qDebug()<< "lyric: " << mLyric;
+    mLyric.remove(QRegularExpression("[\]\[0-9:\.]"));
     return mLyric;
 }
 

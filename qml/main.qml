@@ -60,12 +60,15 @@ CPageStackWindow {
                 mainPg.singerId = contrl.showMusic(4);
                 mainPg.singer = contrl.showMusic(5);
                 mainPg.albumtitle = contrl.showMusic(6);
+                if(mainPg.playUrl == "") {
+                    contrl.getMusicReq(mainPg.cid,mainPg.sid,true)
+                } else {
                 player.mplay(mainPg.playUrl)
-                contrl.getLyric()
+                contrl.getLyric()}
             }
             onError: {
                 console.log("error: "+s);
-                gToast.requestToast(s);
+                gToast.requestToast(s+",请检查网络连接～");
             }
         }
 
@@ -134,14 +137,24 @@ CPageStackWindow {
 
             Rectangle {
                 id: lyric_content
-                color: "#fff"
-                opacity: 0.2
+                color: "#000"
                 visible: false
                 anchors.top: parent.top
                 anchors.topMargin: 10
+                anchors.left: parent.left
+                anchors.leftMargin: 40
                 Text {
+                    id: aaa
+//                    anchors.horizontalCenter: parent.horizontalCenter
+                    text: mainPg.title
+                    color: "#9c5f5f"
+                    font.pixelSize: 40
+                }
+
+                Text {
+                    anchors.top: aaa.bottom
                     anchors.left: parent.left
-                    text: mainPg.lyric_txt==" "? "亲～我们也没有歌词哇～":mainPg.lyric_txt
+                    text: mainPg.lyric_txt==""? "亲～我们也没有歌词哇～":mainPg.lyric_txt
                     font.pixelSize: 30
                     color: "#fff"
                 }
