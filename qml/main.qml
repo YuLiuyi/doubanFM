@@ -6,6 +6,8 @@ import QtQuick.Controls 1.2
 import QtQuick.Dialogs 1.2
 import QtGraphicalEffects 1.0
 
+import dataModel 1.0
+
 CPageStackWindow {
     initialPage:CPage{
         id: mainPg
@@ -25,6 +27,7 @@ CPageStackWindow {
         property int ssid :0
         property int like: 0
         property string lyric_txt: "value"
+        property bool isCurrentItem: false
 
         anchors.fill: parent
         color: "#000"
@@ -82,83 +85,108 @@ CPageStackWindow {
                     contrl.getMusicReq(mainPg.cid,mainPg.sid,true)
                 }
             }
+            onPositionChanged : {
+//                console.log("postion = " + player.position)
+                lyricListModel.getIndex(player.position);
+            }
         }
 
-        //        LyricModel {
-        //            id: lm
-        //            onCurrentIndexChanged: {
-        //                lyric_list.currentIndex = currentIndex;
-        //            }
-        //        }
+//        Flickable {
+//            width: parent.width
+//            height: parent.height
+//            contentWidth: parent.width+100
+//            contentHeight: 2.5*parent.height
+//            anchors.top: rect.bottom
 
-        //        ListView {
-        //            id: lyric_list
-        //            visible: false
-        //            width: parent.width
-        //            height: 210
-        //            anchors.horizontalCenter: parent.horizontalCenter
-        //            anchors.top: parent.top
-        //            anchors.topMargin: 10
-        //            clip: true
-        //            spacing: 3
-        //            highlightRangeMode: ListView.StrictlyEnforceRange
-        //            preferredHighlightBegin: 8
-        //            preferredHighlightEnd: 30
-        //            highlight: Rectangle {
-        //                color: Qt.rgba(0,0,0,0)
-        //                Behavior on y {
-        //                    SmoothedAnimation {
-        //                        duration: 300
-        //                    }
-        //                }
-        //            }
-        //            model: lm
-        //            delegate: Rectangle {
-        //                width: parent.width
-        //                height: 15
-        //                color: Qt.rgba(0,0,0,0)
-        //                Text {
-        //                    anchors.centerIn: parent
-        //                    horizontalAlignment: Text.AlignHCenter
-        //                    text: textLine
-        //                    color: "#4c4c4c"
-        //                    font.pointSize: 10
-        //                    font.bold: parent.ListView.isCurrentItem
-        //                }
-        //            }
-        //        }
+//            Rectangle {
+//                id: lyric_list
+//                color: "#000"
+//                visible: false
+//                anchors.top: parent.top
+//                anchors.topMargin: 10
+//                anchors.left: parent.left
+//                anchors.leftMargin: 40
+//                Text {
+//                    id: aaa
+////                    anchors.horizontalCenter: parent.horizontalCenter
+//                    text: mainPg.title
+//                    color: "#9c5f5f"
+//                    font.pixelSize: 40
+//                }
 
-        Flickable {
-            width: parent.width
-            height: parent.height
-            contentWidth: parent.width+100
-            contentHeight: 2.5*parent.height
-            anchors.top: rect.bottom
+//                Text {
+//                    anchors.top: aaa.bottom
+//                    anchors.left: parent.left
+//                    text: mainPg.lyric_txt==""? "亲～我们也没有歌词哇～":mainPg.lyric_txt
+//                    font.pixelSize: 30
+//                    color: "#fff"
+//                }
+//            }}
+        Connections {
+            target: lyricListModel
+            onCurrentIndexChanged: {
+                console.log("currentIndex = "+lyricListModel.currentIndex);
+                lyricList.currentIndex = lyricListModel.currentIndex;
+            }
+        }
 
+        Item {
+            id: lyric_list
+            anchors.fill: parent
+            visible: false
             Rectangle {
-                id: lyric_content
+                id: lyric_rec
                 color: "#000"
                 visible: false
+                height: 40
                 anchors.top: parent.top
-                anchors.topMargin: 10
-                anchors.left: parent.left
-                anchors.leftMargin: 40
+                anchors.topMargin: 80
+                anchors.horizontalCenter: parent.horizontalCenter
                 Text {
                     id: aaa
-//                    anchors.horizontalCenter: parent.horizontalCenter
+                    //                    anchors.horizontalCenter: parent.horizontalCenter
                     text: mainPg.title
                     color: "#9c5f5f"
                     font.pixelSize: 40
                 }
+            }
 
-                Text {
-                    anchors.top: aaa.bottom
-                    anchors.left: parent.left
-                    text: mainPg.lyric_txt==""? "亲～我们也没有歌词哇～":mainPg.lyric_txt
-                    font.pixelSize: 30
-                    color: "#fff"
+            ListView {
+                id: lyricList
+                width: parent.width
+                height: parent.height
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.top: lyric_rec.bottom
+                clip: true
+                spacing: 3
+                highlightRangeMode: ListView.StrictlyEnforceRange
+                preferredHighlightBegin: 8
+                preferredHighlightEnd: 30
+                highlightFollowsCurrentItem: true
+                highlight: Rectangle {
+                    color: "#917676"
+                    Behavior on y {
+                        SmoothedAnimation {
+                            duration: 300//???
+                        }
+                    }
                 }
-            }}
+                model: lyricListModel
+                delegate: Rectangle {
+                    width: parent.width
+                    height: 60
+                    color: Qt.rgba(0,0,0,0)
+                    Text {
+                        anchors.centerIn: parent
+                        horizontalAlignment: Text.AlignHCenter
+                        text: textLine
+                        color: "#4c4c4c"
+                        font.pixelSize: 30
+                        font.bold: mainPg.isCurrentItem
+                    }
+                }
+            }
+        }
 
         Rectangle {
             id: rect
@@ -185,7 +213,7 @@ CPageStackWindow {
                             mainpage.visible = true
                         } else {
                             channel.visible = true
-                            lyric_content.visible = false
+                            lyric_list.visible = false
                             mainpage.visible = false
                         }
                     }
@@ -203,18 +231,17 @@ CPageStackWindow {
                 MouseArea{
                     anchors.fill: parent
                     onClicked: {
-                        console.log("show lyric !!")
                         console.log("lyric") ;
-                        if(lyric_content.visible) {
-                            lyric_content.visible = false
+                        if(lyric_list.visible) {
+                            lyric_list.visible = false
                             mainpage.visible = true
                         } else {
                             mainpage.visible = false
                             channel.visible = false
-                            lyric_content.visible = true;
+                            lyric_list.visible = true;
                         }
-                        mainPg.lyric_txt = contrl.showLyric()
-                        console.log("qml lyric:"+mainPg.lyric_txt);
+//                        mainPg.lyric_txt = contrl.showLyric()
+//                        console.log("qml lyric:"+mainPg.lyric_txt);
                     }
                 }
             }
@@ -428,7 +455,7 @@ CPageStackWindow {
                 Image {
                     id: next
                     width:  80
-                    height: 70
+                    height: 80
                     anchors.verticalCenter: parent.verticalCenter
                     source: "qrc:/images/res/next_clicked.png"
                     MouseArea {

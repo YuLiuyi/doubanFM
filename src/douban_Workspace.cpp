@@ -2,20 +2,26 @@
 #include <QDebug>
 #include "channelInfo.h"
 #include <QQmlContext>
-#include "lyricmodel.h"
+
 
 douban_Workspace::douban_Workspace()
     : CWorkspace()
 {
     qRegisterMetaType<ChannelList>("ChannelList");
+    qRegisterMetaType<lyricData>("lyricData");
+
     m_view = SYBEROS::SyberosGuiCache::qQuickView();
     QObject::connect(m_view->engine(), SIGNAL(quit()), qApp, SLOT(quit()));
+
+    mLyricModel = new lyricModel;
+    m_view->rootContext()->setContextProperty("lyricListModel", mLyricModel);
 
     mChannelListModel = new ChannelListModel;
     m_view->rootContext()->setContextProperty("channelListModel", mChannelListModel);
 
     m_view->rootContext()->setContextProperty("contrl", &contrl);
     QObject::connect(&contrl,SIGNAL(channelResult(ChannelList)), mChannelListModel, SLOT(handleList(ChannelList)));
+    QObject::connect(&contrl,SIGNAL(proLyricFinished(lyricData)), mLyricModel, SLOT(setLyric(lyricData)));
 
     mMediaPlayer = new MusicPlayer;
     m_view->rootContext()->setContextProperty("player", mMediaPlayer);

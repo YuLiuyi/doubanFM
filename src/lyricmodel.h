@@ -22,17 +22,21 @@ private:
     QString text;
 };
 
+typedef QList<lyricLine> lyricData, tempData;
+
 class lyricModel : public QAbstractListModel {
     Q_OBJECT
 public:
+
+    Q_PROPERTY(int currentIndex READ currentIndex WRITE setcurrentIndex NOTIFY currentIndexChanged)
+
     explicit lyricModel(QObject *parent = 0);
     int currentIndex() const;
     int rowCount(const QModelIndex & parent = QModelIndex()) const;
     QVariant data(const QModelIndex & index, int role = Qt::DisplayRole) const;
-    Q_INVOKABLE bool setPathofSong(QString path);
     Q_INVOKABLE int findIndex(int position);
     Q_INVOKABLE int getIndex(int position);
-    Q_PROPERTY(int currentIndex READ currentIndex WRITE setcurrentIndex NOTIFY currentIndexChanged)
+
     void addSingleLine(lyricLine l);
     void removeTopLine();
     void setcurrentIndex(const int & i);
@@ -46,13 +50,14 @@ signals:
     void currentIndexChanged();
 
 public slots:
+    bool setLyric(lyricData lyric);
 
 private:
     QHash<int, QByteArray> roleNames() const;
     void clearData();
+    lyricData mLyricData;
 
     int m_currentIndex;
-    QList<lyricLine> lyricData, tempData;
 };
 
 #endif // LYRICMODEL_H

@@ -11,6 +11,7 @@
 #include "controller.h"
 #include "channelListModel.h"
 #include "musicplayer.h"
+#include "lyricmodel.h"
 
 
 using namespace SYBEROS;
@@ -24,6 +25,7 @@ private:
     Controller contrl;
     ChannelListModel *mChannelListModel;
     MusicPlayer *mMediaPlayer;
+    lyricModel *mLyricModel;
 
 
 public:

@@ -5,6 +5,7 @@
 
 lyricLine::lyricLine() {
     milliseconds = INT_MAX;
+    qDebug()<<Q_FUNC_INFO<<__LINE__;
     text = " ";
 }
 
@@ -31,56 +32,42 @@ int lyricModel::currentIndex() const {
 
 int lyricModel::rowCount(const QModelIndex & parent) const {
     Q_UNUSED(parent);
-    return lyricData.count();
+    return mLyricData.count();
 }
 
 QVariant lyricModel::data(const QModelIndex & index, int role) const {
-    if (index.row() < 0 || index.row() >= lyricData.count())
+    if (index.row() < 0 || index.row() >= mLyricData.count())
             return QVariant();
-    const lyricLine &ll = lyricData.at(index.row());
+    const lyricLine &ll = mLyricData.at(index.row());
     switch (role) {
     case timeRole:
         return ll.getmilliseconds();
     case textRole:
         return ll.gettext();
+        qDebug()<<Q_FUNC_INFO<<__LINE__<<"ll.gettext():"<<ll.gettext();
     default:
         return QVariant();
     }
 }
 
-bool lyricModel::setPathofSong(QString path) {
-    clearData();
-    setcurrentIndex(0);
-    QFileInfo fi(path);
-    path = fi.path().mid(7) + "/" + fi.completeBaseName() + ".lrc";
-    fi.setFile(path);
-    if (fi.exists() && fi.isReadable()) {
-        QFile flyric(path);
-        if (! flyric.open(QFile::ReadOnly | QFile::Text)) {
-            return false;
-        }
-        bool ok;
-        QString textLine;
-        QTextStream sin(& flyric);
-        int milliseconds;
-        while (! sin.atEnd()) {
-            textLine = sin.readLine();
-            textLine.mid(1,1).toInt(& ok, 10);
-            if (! ok) {
-                continue;
-            }
-            milliseconds = (textLine.mid(1,2).toInt(& ok) * 60 +
-                    textLine.mid(4,2).toInt(& ok)) * 1000 +
-                    textLine.mid(7,2).toInt(& ok) * 10;
-            textLine = textLine.mid(10);
-            addSingleLine(lyricLine(milliseconds, textLine));
-        }
-        flyric.close();
-        return true;
-    } else {
-        addSingleLine(lyricLine(0, tr("未找到歌词")));
-        return false;
-    }
+bool lyricModel::setLyric(lyricData lyric) {
+        clearData();
+    //    qDebug()<<Q_FUNC_INFO<<__LINE__<<"lyric:"<<lyric.at(0).gettext();
+        setcurrentIndex(0);
+        QString text = lyric.at(0).gettext();
+         beginResetModel();
+   if(text == "") {
+       mLyricData.append(lyricLine(0,"未找到歌词～"));
+   } else {
+      mLyricData = lyric;
+      qDebug()<<Q_FUNC_INFO<<__LINE__<<"lyric:"<<mLyricData.at(0).gettext();
+   }
+    endResetModel();
+    //        return true;
+    //    } else {
+    //        addSingleLine(lyricLine(0, tr("未找到歌词")));
+    //        return false;
+    //    }
 }
 
 int lyricModel::findIndex(int position) {
@@ -90,10 +77,10 @@ int lyricModel::findIndex(int position) {
         return 0;
     }
     //bug fix end
-    int countless = lyricData.count() - 1, mid = lyricData.count() / 2, diff = mid / 2;
+    int countless = mLyricData.count() - 1, mid = mLyricData.count() / 2, diff = mid / 2;
     while (1) {
-        if (lyricData.at(mid).getmilliseconds() <= position) {
-            if (mid < countless && lyricData.at(mid + 1).getmilliseconds() > position) {
+        if (mLyricData.at(mid).getmilliseconds() <= position) {
+            if (mid < countless && mLyricData.at(mid + 1).getmilliseconds() > position) {
                 break;
             } else {
                 mid += diff;
@@ -111,8 +98,8 @@ int lyricModel::findIndex(int position) {
 }
 
 int lyricModel::getIndex(int position) {
-    if (m_currentIndex + 1 < lyricData.count() &&
-            lyricData.at(m_currentIndex + 1).getmilliseconds() <= position) {
+    if (m_currentIndex + 1 < mLyricData.count() &&
+            mLyricData.at(m_currentIndex + 1).getmilliseconds() <= position) {
         m_currentIndex ++;
         emit currentIndexChanged();
     }
@@ -120,19 +107,19 @@ int lyricModel::getIndex(int position) {
 }
 
 void lyricModel::addSingleLine(lyricLine l) {
-    beginInsertRows(QModelIndex(), lyricData.count(), lyricData.count());
-    lyricData << l;
+    beginInsertRows(QModelIndex(), mLyricData.count(), mLyricData.count());
+    mLyricData << l;
     endInsertRows();
 }
 
 void lyricModel::removeTopLine() {
     beginRemoveRows(QModelIndex(), 0, 0);
-    lyricData.removeFirst();
+    mLyricData.removeFirst();
     endRemoveRows();
 }
 
 void lyricModel::setcurrentIndex(const int & i) {
-    if ((i == 0 || (i < lyricData.count())) && m_currentIndex != i) {
+    if ((i == 0 || (i < mLyricData.count())) && m_currentIndex != i) {
         m_currentIndex = i;
         emit currentIndexChanged();
     }
@@ -147,6 +134,6 @@ QHash<int, QByteArray> lyricModel::roleNames() const {
 
 void lyricModel::clearData() {
     beginResetModel();
-    lyricData.clear();
+    mLyricData.clear();
     endResetModel();
 }

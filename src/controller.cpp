@@ -7,7 +7,7 @@
 #include <QJsonArray>
 #include <QDebug>
 #include <QUrlQuery>
-#include <QRegularExpression>
+#include <QRegExp>
 #define CHANNEL_REQUEST "https://www.douban.com/j/app/radio/channels"
 #define MUSIC_REQUEST "https://www.douban.com/j/app/radio/people?app_name=radio_android&version=100&type=b&channel="
 #define LYRIC_REQUEST "http://api.douban.com/v2/fm/lyric"
@@ -243,6 +243,8 @@ QVariant Controller::showMusic(int index)
 
 void Controller::getLyric() {
 
+    lrc_map.clear();
+    mLyricData.clear();
     qDebug() << "Going to get lyric for " << "sid = "<<mSongid << ",ssid =  " <<mSsid;
 
     QNetworkRequest request;
@@ -290,22 +292,130 @@ void Controller::proLyric(const QByteArray &buf)
             if(obj.contains("lyric")) {
 
                 qDebug() << "lyric: "<<obj.value("lyric");
-                mLyric = obj.value("lyric").toString();
+                QString lyric = obj.value("lyric").toString();
 
                 //                QJsonArray jsonArray = obj["channels"].toArray();
 
                 //                qDebug() << "======================jsonArray:"<<jsonArray.size();
+
+                if(lyric == "") {
+
+                    mLyricData.append(lyricLine(0, lyric));
+
+                } else if(lyric == "此曲目为纯音乐") {
+
+                    mLyricData.append(lyricLine(0, lyric));
+
+                } else {
+
+                    QStringList lines = lyric.split("\r\n");
+
+                    //这个是时间标签的格式[00:05.54]
+                    //正则表达式d{2}表示匹配2个数字
+                    QRegExp rx("\\[\\d{2}:\\d{2}\\.\\d{2}\\]");
+                    int index;
+                    for(index = 0; index < lines.length(); index++) {
+                        QString oneline = lines.at(index);
+                        qDebug()<<Q_FUNC_INFO<<__LINE__<<"oneline :"<<lines.at(index);
+                        QString temp = oneline;
+                        temp.replace(rx, "");//用空字符串替换正则表达式中所匹配的地方,这样就获得了歌词文本
+                        // 然后依次获取当前行中的所有时间标签，并分别与歌词文本存入QMap中
+                        //indexIn()为返回第一个匹配的位置，如果返回为-1，则表示没有匹配成功
+                        //正常情况下pos后面应该对应的是歌词文件
+                        int pos = rx.indexIn(oneline, 0);
+                        while (pos != -1) { //表示匹配成功
+                            QString cap = rx.cap(0);//返回第0个表达式匹配的内容
+                            // 将时间标签转换为时间数值，以毫秒为单位
+                            QRegExp regexp;
+                            regexp.setPattern("\\d{2}(?=:)");
+                            regexp.indexIn(cap);
+                            int minute = regexp.cap(0).toInt();
+                            regexp.setPattern("\\d{2}(?=\\.)");
+                            regexp.indexIn(cap);
+                            int second = regexp.cap(0).toInt();
+                            regexp.setPattern("\\d{2}(?=\\])");
+                            regexp.indexIn(cap);
+                            int millisecond = regexp.cap(0).toInt();
+                            qint64 totalTime = minute * 60000 + second * 1000 + millisecond * 10;
+                            qDebug()<<__LINE__<<"totalTime = "<<totalTime;
+
+                            lrc_map.insert(totalTime, temp);
+
+                            pos += rx.matchedLength();
+                            pos = rx.indexIn(oneline, pos);//匹配全部
+                            qDebug()<<__LINE__<<"pos = "<<pos;
+
+                        }
+                    }
+                    QMap<qint64, QString>::iterator it; //遍历map
+                    for ( it = lrc_map.begin(); it != lrc_map.end(); ++it ){
+                        mLyricData.append(lyricLine(it.key(), it.value()));
+                    }
+                }
+
+                emit proLyricFinished(mLyricData);
+
+
             }
         }
     }
 }
 
-QString Controller::showLyric(){
+//void Controller::UpdateTime(qint64 time)
+//{
+//    qint64 total_time_value = MusicPlayer::duration();//直接获取该音频文件的总时长参数，单位为毫秒
+//    //这3个参数分别代表了时，分，秒；60000毫秒为1分钟，所以分钟第二个参数是先除6000,第3个参数是直接除1s
+//    QTime total_time(0, (total_time_value/60000)%60, (total_time_value/1000)%60);
+//    QTime current_time(0, (time/60000)%60, (time/1000)%60);//传进来的time参数代表了当前的时间
+//    QString str = current_time.toString("mm:ss") + "/" + total_time.toString("mm:ss");
+//    time_label->setText(str);
 
-    qDebug()<< "lyric: " << mLyric;
-    mLyric.remove(QRegularExpression("[\]\[0-9:\.]"));
-    return mLyric;
-}
+//    // 获取当期时间对应的歌词
+//    if(!lrc_map.isEmpty()) {
+//        // 获取当前时间在歌词中的前后两个时间点
+//        qint64 previous = 0;
+//        qint64 later = 0;
+//        int index;
+//        //keys()方法返回lrc_map列表
+//        for (index = 0; index < lrc_map.length(); index ++) {
+//            int value = lrc_map.at(i).getmilliseconds();
+//            if (time >= value) {
+//                previous = value;
+//            } else {
+//                later = value;
+//                break;
+//            }
+//        }
+
+//        // 达到最后一行,将later设置为歌曲总时间的值
+//        if (later == 0)
+//            later = total_time_value;
+
+//        // 获取当前时间所对应的歌词内容
+//        QString current_lrc = lrc_map.value(previous);
+
+////        // 没有内容时
+////        if(current_lrc.length() < 2)
+////            current_lrc = tr("简易音乐播放器");
+
+//        // 如果是新的一行歌词，那么重新开始显示歌词遮罩
+//        if(current_lrc != lrc->text()) {
+//            lrc->setText(current_lrc);
+//            top_label->setText(current_lrc);
+//            qint64 interval_time = later - previous;
+//            lrc->start_lrc_mask(interval_time);
+//        }
+//    } else {  // 如果没有歌词文件，则在顶部标签中显示歌曲标题
+//        qDebug()<< "没有歌词文件";
+//    }
+//}
+
+//QString Controller::showLyric(){
+
+//    qDebug()<< "lyric: " << mLyric;
+//    mLyric.remove(QRegularExpression("[\]\[0-9:\.]"));
+//    return mLyric;
+//}
 
 
 Controller::~Controller()

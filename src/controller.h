@@ -3,7 +3,10 @@
 #include <QObject>
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
+#include <QMap>
 #include "channelInfo.h"
+#include "musicplayer.h"
+#include "lyricmodel.h"
 
 typedef struct _musicInfoJson
 {
@@ -37,12 +40,15 @@ public:
     //lyric
     Q_INVOKABLE void getLyric();
     void proLyric(const QByteArray &buf);
-    Q_INVOKABLE QString showLyric();
+//    Q_INVOKABLE QString showLyric();
+    void UpdateTime(qint64 time);
 
 signals:
     void channelResult(ChannelList list);
     void getInfoFinished();
     void freshFinished();
+    void proLyricFinished(lyricData);
+    void lyricNull();
     void error(QString s);
 
 private slots:
@@ -67,6 +73,8 @@ private:
     QString                mSongid;
     QString                mSsid;
     QString                mLyric;
+    lyricData              mLyricData;
+    QMap<qint64, QString>  lrc_map;
 
 };
 

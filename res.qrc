@@ -43,5 +43,7 @@
         <file>res/listicon_favor.png</file>
         <file>res/ic_music.png</file>
         <file>res/expanded.png</file>
+        <file>res/pause.png</file>
+        <file>res/play.png</file>
     </qresource>
 </RCC>
