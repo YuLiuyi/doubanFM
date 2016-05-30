@@ -22,7 +22,7 @@ MusicPlayer::MusicPlayer(QObject *parent) :
     connect(m_mediaPlayer, SIGNAL(mediaStatusChanged(QMediaPlayer::MediaStatus)),
             this, SIGNAL(mediaStatusChanged(QMediaPlayer::MediaStatus)));
 
-    setVolume(30);
+    setVolume(15);
 
 }
 

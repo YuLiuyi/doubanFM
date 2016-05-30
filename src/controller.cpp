@@ -9,13 +9,12 @@
 #include <QUrlQuery>
 #include <QRegExp>
 #define CHANNEL_REQUEST "https://www.douban.com/j/app/radio/channels"
-#define MUSIC_REQUEST "https://www.douban.com/j/app/radio/people?app_name=radio_android&version=100&type=b&channel="
+#define MUSIC_REQUEST "https://www.douban.com/j/app/radio/people?app_name=radio_android&version=100&type=n&sid=&h=&channel="
 #define LYRIC_REQUEST "http://api.douban.com/v2/fm/lyric"
 
 Controller::Controller()
 {
     mManager = new QNetworkAccessManager();
-    mIsNext = false;
 }
 
 //send request
@@ -107,18 +106,13 @@ void Controller::error(QNetworkReply::NetworkError error)
 }
 
 
-void Controller::getMusicReq(QString cid, int sid, bool isNext)
+void Controller::getMusicReq(QString cid)
 {
-    //request url:https://www.douban.com/j/app/radio/people?app_name=radio_android&version=100&type=b&channel=5&sid=4
-    mIsNext = isNext;
+    //request url:https://www.douban.com/j/app/radio/people?app_name=radio_android&version=100&type=n&sid=4&channel=
     QNetworkRequest request;
     QString url = MUSIC_REQUEST;
-    qDebug() << Q_FUNC_INFO << "cid = " << cid << "sid = " << sid;
-    QString s = QString::number(sid);
+    qDebug() << Q_FUNC_INFO << "cid = " << cid;
     url.append(cid);
-    url.append("&");
-    url.append("sid=");
-    url.append(s);
     request.setUrl(QUrl(url));
     qDebug() << Q_FUNC_INFO << "request = "<< request.url().toString();
     mMusicReply = mManager->get(request);
@@ -137,12 +131,9 @@ void Controller::musicReqFinished()
         qDebug() << Q_FUNC_INFO << "getbuf = " << getBuf;
 
         proMusic(mMusicInfoStru, getBuf);
+        qDebug()<<__LINE__<<"-------------------";
+        emit freshFinished();
 
-        if(mIsNext) {
-            emit freshFinished();
-        } else {
-            emit getInfoFinished();
-        }
     } else {
         qDebug() << Q_FUNC_INFO <<__LINE__<<"error";
         error("get music failed!");
@@ -312,11 +303,12 @@ void Controller::proLyric(const QByteArray &buf)
 
                     //这个是时间标签的格式[00:05.54]
                     //正则表达式d{2}表示匹配2个数字
+
                     QRegExp rx("\\[\\d{2}:\\d{2}\\.\\d{2}\\]");
                     int index;
                     for(index = 0; index < lines.length(); index++) {
                         QString oneline = lines.at(index);
-                        qDebug()<<Q_FUNC_INFO<<__LINE__<<"oneline :"<<lines.at(index);
+//                        qDebug()<<Q_FUNC_INFO<<__LINE__<<"oneline :"<<lines.at(index);
                         QString temp = oneline;
                         temp.replace(rx, "");//用空字符串替换正则表达式中所匹配的地方,这样就获得了歌词文本
                         // 然后依次获取当前行中的所有时间标签，并分别与歌词文本存入QMap中
@@ -349,13 +341,17 @@ void Controller::proLyric(const QByteArray &buf)
                     }
                     QMap<qint64, QString>::iterator it; //遍历map
                     for ( it = lrc_map.begin(); it != lrc_map.end(); ++it ){
-                        mLyricData.append(lyricLine(it.key(), it.value()));
+                        if(it.key() == 0) {
+                            qDebug()<<Q_FUNC_INFO<<__LINE__;
+                            mLyricData.append(lyricLine(0,it.value()));
+                        } else {
+                            qDebug()<<Q_FUNC_INFO<<__LINE__;
+                            mLyricData.append(lyricLine(it.key(), it.value()));
+                        }
                     }
                 }
 
                 emit proLyricFinished(mLyricData);
-
-
             }
         }
     }

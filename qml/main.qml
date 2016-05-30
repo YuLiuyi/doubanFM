@@ -14,7 +14,6 @@ CPageStackWindow {
         //
         property int c_index: 0
         property string cid: "4"
-        property string sid: "3"
         //
         property string channelName: "八零"
         property string picture: ""//
@@ -28,31 +27,18 @@ CPageStackWindow {
         property int like: 0
         property string lyric_txt: "value"
         property bool isCurrentItem: false
+//        property int  volume: 0
 
         anchors.fill: parent
         color: "#000"
         Component.onCompleted: {
             console.log("component completed.")
             contrl.getChannelInfoReq();
-            contrl.getMusicReq(cid,sid,true)
+            contrl.getMusicReq(cid)
         }
 
         Connections{
             target: contrl
-            onGetInfoFinished :{
-                console.log("getInfofinished");
-                console.log("playUrl = "+contrl.showMusic(1))
-                //                mainPg.show()
-                mainPg.picture = contrl.showMusic(0);
-                mainPg.playUrl = contrl.showMusic(1);
-                mainPg.title = contrl.showMusic(2);
-                mainPg.public_time = contrl.showMusic(3);
-                mainPg.singerId = contrl.showMusic(4);
-                mainPg.singer = contrl.showMusic(5);
-                mainPg.albumtitle = contrl.showMusic(6);
-                player.mplay(mainPg.playUrl)
-                contrl.getLyric()
-            }
             onFreshFinished: {
                 console.log("show playUrl = "+ mainPg.playUrl)
                 //                mainPg.show()
@@ -64,7 +50,7 @@ CPageStackWindow {
                 mainPg.singer = contrl.showMusic(5);
                 mainPg.albumtitle = contrl.showMusic(6);
                 if(mainPg.playUrl == "") {
-                    contrl.getMusicReq(mainPg.cid,mainPg.sid,true)
+                    contrl.getMusicReq(mainPg.cid)
                 } else {
                 player.mplay(mainPg.playUrl)
                 contrl.getLyric()}
@@ -82,13 +68,16 @@ CPageStackWindow {
                 if(player.mediaStatus == 7) {
                     console.log("show playUrl = "+ mainPg.playUrl)
                     //                    page.show()
-                    contrl.getMusicReq(mainPg.cid,mainPg.sid,true)
+                    contrl.getMusicReq(mainPg.cid)
                 }
             }
             onPositionChanged : {
 //                console.log("postion = " + player.position)
                 lyricListModel.getIndex(player.position);
             }
+//            onVolumeChanged: {
+//                player.volume = volume;
+//            }
         }
 
 //        Flickable {
@@ -134,6 +123,13 @@ CPageStackWindow {
             id: lyric_list
             anchors.fill: parent
             visible: false
+            Image {
+                id: lyric_background
+                source: "qrc:/images/res/background1.jpg"
+                anchors.fill: parent
+                opacity: 0.2
+            }
+
             Rectangle {
                 id: lyric_rec
                 color: "#000"
@@ -182,7 +178,15 @@ CPageStackWindow {
                         text: textLine
                         color: "#4c4c4c"
                         font.pixelSize: 30
-                        font.bold: mainPg.isCurrentItem
+
+                    }
+                }
+                MouseArea {
+                    anchors.fill: parent
+                    onClicked: {
+                        console.log("double clicked")
+                        mainpage.visible = true;
+                        lyric_list.visible = false
                     }
                 }
             }
@@ -231,17 +235,15 @@ CPageStackWindow {
                 MouseArea{
                     anchors.fill: parent
                     onClicked: {
-                        console.log("lyric") ;
+                        console.log("volume :"+player.volume)
                         if(lyric_list.visible) {
                             lyric_list.visible = false
                             mainpage.visible = true
                         } else {
-                            mainpage.visible = false
+                            lyric_list.visible = true
                             channel.visible = false
-                            lyric_list.visible = true;
+                            mainpage.visible = false
                         }
-//                        mainPg.lyric_txt = contrl.showLyric()
-//                        console.log("qml lyric:"+mainPg.lyric_txt);
                     }
                 }
             }
@@ -255,10 +257,11 @@ CPageStackWindow {
                 font.pixelSize: 35
                 font.family: "AR PL UKai CN"
                 font.bold: true
-                text: "豆瓣FM"
+                text: "随心听"
             }
         }
 
+//
         Item {
             id: channel
             anchors.left: parent.left
@@ -266,6 +269,12 @@ CPageStackWindow {
             anchors.top: rect.bottom
             anchors.bottom: parent.bottom
             visible: false
+            Image {
+                id: channel_background
+                source: "qrc:/images/res/background1.jpg"
+                anchors.fill: parent
+                opacity: 0.2
+            }
 
             ListView {
                 id: view
@@ -280,14 +289,13 @@ CPageStackWindow {
                     id: _delegate
                     width: view.width
                     height: 80
-                    color: "#fff"
-                    opacity: 0.2
+                    color: Qt.rgba(0,0,0,0)
 
                     Rectangle {
                         id: decorateLine
-                        color: gUiConst.getValue("CL1")
                         height: 1
-                        opacity: 0.5
+                        color: "#a89292"
+                        opacity: 0.2
                         anchors.bottom: parent.bottom
                         anchors.left: parent.left
                         anchors.leftMargin: 40
@@ -303,7 +311,7 @@ CPageStackWindow {
                         anchors.verticalCenter: parent.verticalCenter
                         text:  name + " MHz"
                         font.family: "汉仪宋体"
-                        color: "#ffffff"
+                        color: "#4c4c4c"
                         font.pixelSize:  30
                         elide: Text.ElideRight
                         verticalAlignment: Text.AlignVCenter
@@ -318,8 +326,7 @@ CPageStackWindow {
                             console.log("channelId = "+mainPg.cid+",,,index = "+index)
                             mainPg.channelName = titleTxtInfo.text
                             console.log("channel.name ="+ mainPg.channelName)
-                            mainPg.sid = channelListModel.getSeq_id(index);
-                            contrl.getMusicReq(mainPg.cid, mainPg.sid, false)
+                            contrl.getMusicReq(mainPg.cid)
                             channel.visible = false
                             mainpage.visible = true
                         }
@@ -339,7 +346,9 @@ CPageStackWindow {
                 id: bg
                 anchors.fill: parent
                 source: mainPg.picture == "" ? "qrc:/images/res/album_init.jpg":mainPg.picture
+//                source: "qrc:/images/res/background2.jpg"
                 visible: false
+//                opacity: player.state == MediaPlayer.PlayingState? 1:0.5
             }
 
             FastBlur{
@@ -371,6 +380,7 @@ CPageStackWindow {
                 source: mainPg.picture == "" ? "qrc:/images/res/album_init.jpg":mainPg.picture
                 color:"lightblue"
                 border:5
+                opacity: player.state == MediaPlayer.PlayingState? 1:0.5
             }
 
             Text {
@@ -392,6 +402,15 @@ CPageStackWindow {
                     loops: Animation.Infinite
                     onStopped:{
                         animation.start()
+                    }
+                }
+                MouseArea{
+                    anchors.fill: parent
+                    onClicked: {
+                        console.log("lyric") ;
+                        mainpage.visible = false
+                        channel.visible = false
+                        lyric_list.visible = true;
                     }
                 }
             }
@@ -455,14 +474,14 @@ CPageStackWindow {
                 Image {
                     id: next
                     width:  80
-                    height: 80
+                    height: 75
                     anchors.verticalCenter: parent.verticalCenter
                     source: "qrc:/images/res/next_clicked.png"
                     MouseArea {
                         anchors.fill: parent
                         onClicked: {
                             console.log("next")
-                            contrl.getMusicReq(mainPg.cid,mainPg.sid,true)
+                            contrl.getMusicReq(mainPg.cid)
                             //                            mainPg.show()
 
                             //                            player.mplay(playUrl)

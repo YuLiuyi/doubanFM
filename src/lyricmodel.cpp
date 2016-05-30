@@ -23,7 +23,7 @@ QString lyricLine::gettext() const {
 }
 
 lyricModel::lyricModel(QObject *parent) : QAbstractListModel(parent) {
-    m_currentIndex = 0;
+    m_currentIndex = -1;
 }
 
 int lyricModel::currentIndex() const {
@@ -38,13 +38,15 @@ int lyricModel::rowCount(const QModelIndex & parent) const {
 QVariant lyricModel::data(const QModelIndex & index, int role) const {
     if (index.row() < 0 || index.row() >= mLyricData.count())
             return QVariant();
+//    qDebug()<<Q_FUNC_INFO<<__LINE__;
     const lyricLine &ll = mLyricData.at(index.row());
+//    qDebug()<<Q_FUNC_INFO<<__LINE__;
     switch (role) {
     case timeRole:
         return ll.getmilliseconds();
     case textRole:
         return ll.gettext();
-        qDebug()<<Q_FUNC_INFO<<__LINE__<<"ll.gettext():"<<ll.gettext();
+//        qDebug()<<Q_FUNC_INFO<<__LINE__<<"ll.gettext():"<<ll.gettext();
     default:
         return QVariant();
     }
@@ -54,13 +56,16 @@ bool lyricModel::setLyric(lyricData lyric) {
         clearData();
     //    qDebug()<<Q_FUNC_INFO<<__LINE__<<"lyric:"<<lyric.at(0).gettext();
         setcurrentIndex(0);
-        QString text = lyric.at(0).gettext();
+        qDebug()<<Q_FUNC_INFO<<__LINE__;
+//        QString text = lyric.at(0).gettext();
+        qDebug()<<Q_FUNC_INFO<<__LINE__;
          beginResetModel();
-   if(text == "") {
+   if(lyric.isEmpty()) {
+       qDebug()<<Q_FUNC_INFO<<__LINE__;
        mLyricData.append(lyricLine(0,"未找到歌词～"));
    } else {
       mLyricData = lyric;
-      qDebug()<<Q_FUNC_INFO<<__LINE__<<"lyric:"<<mLyricData.at(0).gettext();
+//      qDebug()<<Q_FUNC_INFO<<__LINE__<<"lyric:"<<mLyricData.at(0).gettext();
    }
     endResetModel();
     //        return true;

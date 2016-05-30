@@ -33,7 +33,7 @@ public:
     void proChannelInfo(const QByteArray &buf);
 
     //music
-    Q_INVOKABLE void getMusicReq(QString cid, int sid, bool isNext);
+    Q_INVOKABLE void getMusicReq(QString cid);
     void proMusic(struMusicInfo &musicInfo,const QByteArray &buf);
     Q_INVOKABLE QVariant showMusic(int index);
 
@@ -45,7 +45,7 @@ public:
 
 signals:
     void channelResult(ChannelList list);
-    void getInfoFinished();
+//    void getInfoFinished();
     void freshFinished();
     void proLyricFinished(lyricData);
     void lyricNull();
