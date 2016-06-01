@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<sopconfig syberos:versionCode="1" syberos:shareUserId="" syberos:versionName="1.0.3" xmlns:syberos="http://schemas.syberos.com/sop/res/syberos/v1" syberos:sopid="com.syberos.douban">
+<sopconfig syberos:versionName="1.0.6" syberos:versionCode="1" xmlns:syberos="http://schemas.syberos.com/sop/res/syberos/v1" syberos:sopid="com.syberos.douban" syberos:shareUserId="">
     <uses-permission syberos:name="syberos.permission.ACCESS_WAKELOCK"/>
     <uses-permission syberos:name="syberos.permission.ACCESS_WIFI"/>
     <uses-sdk syberos:minSdkVersion="" syberos:targetSdkVersion=""/>
-    <application syberos:description="一款个性化音乐电台." syberos:icon="res/douban.png" syberos:debuggable="true" syberos:name="音乐电台">
-        <uiapp syberos:launcher="true" syberos:icon="res/douban.png" syberos:splash="" syberos:exec="bin/douban" syberos:background="continue" syberos:name="" syberos:id="douban">
+    <application syberos:debuggable="true" syberos:description="一款个性化音乐电台." syberos:name="音乐电台" syberos:icon="res/douban.png">
+        <uiapp syberos:exec="bin/douban" syberos:background="continue" syberos:launcher="true" syberos:name="" syberos:id="douban" syberos:icon="res/douban.png" syberos:splash="">
             <doctype syberos:id=""/>
         </uiapp>
     </application>

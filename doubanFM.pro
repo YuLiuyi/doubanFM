@@ -75,6 +75,7 @@ OTHER_FILES += $$QML_FILES *.qm \
                
 
 DISTFILES += \
-    qml/RoundImage.qml
+    qml/RoundImage.qml \
+    qml/Marquee.qml
 
 

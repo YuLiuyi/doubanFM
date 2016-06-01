@@ -13,9 +13,9 @@ CPageStackWindow {
         id: mainPg
         //
         property int c_index: 0
-        property string cid: "4"
+        property string cid: "61"
         //
-        property string channelName: "八零"
+        property string channelName: "新歌MHz"
         property string picture: ""//
         property string playUrl: ""
         property string title: ""
@@ -26,7 +26,7 @@ CPageStackWindow {
         property int ssid :0
         property int like: 0
         property string lyric_txt: "value"
-        property bool isCurrentItem: false
+        property bool isCurrentItem: true
 //        property int  volume: 0
 
         anchors.fill: parent
@@ -36,12 +36,14 @@ CPageStackWindow {
             contrl.getChannelInfoReq();
             contrl.getMusicReq(cid)
         }
+        property bool errorFlag: true
 
         Connections{
             target: contrl
             onFreshFinished: {
                 console.log("show playUrl = "+ mainPg.playUrl)
                 //                mainPg.show()
+                mainPg.errorFlag = true
                 mainPg.picture = contrl.showMusic(0);
                 mainPg.playUrl = contrl.showMusic(1);
                 mainPg.title = contrl.showMusic(2);
@@ -65,7 +67,8 @@ CPageStackWindow {
             target: player
             onStateChanged : {
                 console.log("status = " + player.mediaStatus)
-                if(player.mediaStatus == 7) {
+                if(player.mediaStatus == 7 && mainPg.errorFlag) {
+                    mainPg.errorFlag = false
                     console.log("show playUrl = "+ mainPg.playUrl)
                     //                    page.show()
                     contrl.getMusicReq(mainPg.cid)
@@ -80,42 +83,13 @@ CPageStackWindow {
 //            }
         }
 
-//        Flickable {
-//            width: parent.width
-//            height: parent.height
-//            contentWidth: parent.width+100
-//            contentHeight: 2.5*parent.height
-//            anchors.top: rect.bottom
 
-//            Rectangle {
-//                id: lyric_list
-//                color: "#000"
-//                visible: false
-//                anchors.top: parent.top
-//                anchors.topMargin: 10
-//                anchors.left: parent.left
-//                anchors.leftMargin: 40
-//                Text {
-//                    id: aaa
-////                    anchors.horizontalCenter: parent.horizontalCenter
-//                    text: mainPg.title
-//                    color: "#9c5f5f"
-//                    font.pixelSize: 40
-//                }
-
-//                Text {
-//                    anchors.top: aaa.bottom
-//                    anchors.left: parent.left
-//                    text: mainPg.lyric_txt==""? "亲～我们也没有歌词哇～":mainPg.lyric_txt
-//                    font.pixelSize: 30
-//                    color: "#fff"
-//                }
-//            }}
         Connections {
             target: lyricListModel
             onCurrentIndexChanged: {
                 console.log("currentIndex = "+lyricListModel.currentIndex);
                 lyricList.currentIndex = lyricListModel.currentIndex;
+                console.log("getIndex="+lyricListModel.getIndex(lyricList.currentIndex))
             }
         }
 
@@ -147,6 +121,53 @@ CPageStackWindow {
                 }
             }
 
+//            ListView {
+//                id: lyricList
+//                width: parent.width
+//                height: parent.height
+//                anchors.horizontalCenter: parent.horizontalCenter
+//                anchors.top: lyric_rec.bottom
+//                clip: true
+//                spacing: 3
+//                highlightRangeMode: ListView.StrictlyEnforceRange
+//                preferredHighlightBegin: 8
+//                preferredHighlightEnd: 30
+//                highlightFollowsCurrentItem: true
+//                highlight: Rectangle {
+//                    color: "#917676"
+//                    Behavior on y {
+//                        SmoothedAnimation {
+//                            duration: 300//???
+//                        }
+//                    }
+//                }
+//                model: lyricListModel
+//                delegate: Rectangle {
+//                    id: lyricRect
+//                    width: parent.width
+//                    height: 60
+//                    color: Qt.rgba(0,0,0,0)
+//                    Text {
+//                        id: lyricTxt
+//                        anchors.centerIn: parent
+//                        horizontalAlignment: Text.AlignHCenter
+//                        text: textLine
+//                        color: "#4c4c4c"
+//                        font.pixelSize: 30
+
+//                    }
+//                }
+
+//                MouseArea {
+//                    anchors.fill: parent
+//                    onClicked: {
+//                        console.log("double clicked")
+//                        mainpage.visible = true;
+//                        lyric_list.visible = false
+//                    }
+//                }
+//            }
+
             ListView {
                 id: lyricList
                 width: parent.width
@@ -159,8 +180,8 @@ CPageStackWindow {
                 preferredHighlightBegin: 8
                 preferredHighlightEnd: 30
                 highlightFollowsCurrentItem: true
-                highlight: Rectangle {
-                    color: "#917676"
+                highlight: Item {
+//                    color: transparent
                     Behavior on y {
                         SmoothedAnimation {
                             duration: 300//???
@@ -168,19 +189,27 @@ CPageStackWindow {
                     }
                 }
                 model: lyricListModel
-                delegate: Rectangle {
-                    width: parent.width
-                    height: 60
-                    color: Qt.rgba(0,0,0,0)
-                    Text {
-                        anchors.centerIn: parent
-                        horizontalAlignment: Text.AlignHCenter
-                        text: textLine
-                        color: "#4c4c4c"
-                        font.pixelSize: 30
-
+                Component {
+                    id: delegate
+                    Rectangle {
+                        id: lyricRect
+                        width: parent.width
+                        height: 60
+                        color: Qt.rgba(0,0,0,0)
+                        Text {
+                            id: lyricTxt
+                            anchors.centerIn: parent
+                            horizontalAlignment: Text.AlignHCenter
+                            text: textLine
+                            font.pixelSize: lyricRect.ListView.isCurrentItem ? 33:30
+                            color: lyricRect.ListView.isCurrentItem ?  "#9c5f5f" : "#4c4c4c"
+                        }
                     }
                 }
+
+                delegate: delegate
+                focus: true
+
                 MouseArea {
                     anchors.fill: parent
                     onClicked: {
@@ -364,9 +393,18 @@ CPageStackWindow {
                 anchors.top: parent.top
                 anchors.topMargin: 40
                 anchors.horizontalCenter: parent.horizontalCenter
-                font.pixelSize: 50
+                font.pixelSize: 45
                 font.bold: true
-                text:"--  "+ mainPg.channelName+"  --"
+                text:"- -  "+ mainPg.channelName+"  - -"
+                MouseArea {
+                    anchors.fill: parent
+                    onClicked: {
+                        console.log("clicked")
+                        mainpage.visible = false
+                        channel.visible = true
+                        lyric_list.visible = false
+                    }
+                }
             }
 
             RoundImage{
@@ -380,32 +418,23 @@ CPageStackWindow {
                 source: mainPg.picture == "" ? "qrc:/images/res/album_init.jpg":mainPg.picture
                 color:"lightblue"
                 border:5
-                opacity: player.state == MediaPlayer.PlayingState? 1:0.5
+                opacity: player.state === MediaPlayer.PlayingState? 1:0.5
             }
 
-            Text {
+
+            Rectangle {
                 id: sname
-                text: mainPg.title
-                color: "#000000"
-                font.family: "Courier New"
-                font.pixelSize: 50
                 anchors.top: play.bottom
                 anchors.topMargin: 100
-                //                width: 200
-                //                anchors.horizontalCenter: parent.horizontalCenter
-                PropertyAnimation on x {
-                    id: animation
-                    //                    running: animationRunning
-                    from: 405
-                    to:(0-sname.text.length*sname.font.pixelSize)+200;
-                    duration: 1000*4
-                    loops: Animation.Infinite
-                    onStopped:{
-                        animation.start()
-                    }
-                }
-                MouseArea{
-                    anchors.fill: parent
+                anchors.horizontalCenter: parent.horizontalCenter
+                height: 80
+                color: transparent
+
+                Marquee {
+                    anchors.centerIn: parent
+                    width: 300
+                    text: mainPg.title
+                    textColor: "black"
                     onClicked: {
                         console.log("lyric") ;
                         mainpage.visible = false
@@ -415,12 +444,11 @@ CPageStackWindow {
                 }
             }
 
-
             Text {
                 id: song
                 color: "#696161"
                 anchors.top: sname.bottom
-                anchors.topMargin: 10
+                anchors.topMargin: 15
                 anchors.horizontalCenter: parent.horizontalCenter
                 font.pixelSize: 30
                 text: mainPg.singer
@@ -455,11 +483,11 @@ CPageStackWindow {
                     width:  80
                     height: 80
                     anchors.verticalCenter: parent.verticalCenter
-                    source: player.state == MediaPlayer.PlayingState?"qrc:/images/res/pause_2.png": "qrc:/images/res/play_2.png"
+                    source: player.state === MediaPlayer.PlayingState?"qrc:/images/res/pause_2.png": "qrc:/images/res/play_2.png"
                     MouseArea {
                         anchors.fill: parent
                         onClicked: {
-                            if(player.state == MediaPlayer.PlayingState)
+                            if(player.state === MediaPlayer.PlayingState)
                             {
                                 console.log("state = "+ player.state)
                                 player.pause()

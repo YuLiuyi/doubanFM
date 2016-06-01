@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE QtCreatorProject>
-<!-- Written by QtCreator 3.6.0, 2016-05-24T10:03:14. -->
+<!-- Written by QtCreator 3.6.0, 2016-05-31T10:57:11. -->
 <qtcreator>
  <data>
   <variable>EnvironmentId</variable>
@@ -693,23 +693,43 @@
       <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">RemoteLinux.DirectUploadStep</value>
       <valuelist type="QVariantList" key="Qt4ProjectManager.MaemoRunConfiguration.LastDeployedFiles">
        <value type="QString">/home/yuliuyi/work/doubanFM/build-doubanFM-Xuanwu_Device-Debug/com.mycompany.douban-1.0.0.sop</value>
+       <value type="QString">/home/yuliuyi/work/doubanFM/build-doubanFM-Xuanwu_Device-Debug/com.syberos.douban-1.0.2.sop</value>
+       <value type="QString">/home/yuliuyi/work/doubanFM/build-doubanFM-Xuanwu_Device-Debug/com.syberos.douban-1.0.1.sop</value>
+       <value type="QString">/home/yuliuyi/work/doubanFM/build-doubanFM-Xuanwu_Device-Debug/com.syberos.douban-1.0.4.sop</value>
+       <value type="QString">/home/yuliuyi/work/doubanFM/build-doubanFM-Xuanwu_Device-Debug/com.syberos.douban-1.0.3.sop</value>
        <value type="QString">/home/yuliuyi/work/doubanFM/build-doubanFM-Xuanwu_Device-Debug/com.syberos.douban-1.0.0.sop</value>
       </valuelist>
       <valuelist type="QVariantList" key="Qt4ProjectManager.MaemoRunConfiguration.LastDeployedHosts">
+       <value type="QString">192.168.100.100</value>
+       <value type="QString">192.168.100.100</value>
+       <value type="QString">192.168.100.100</value>
+       <value type="QString">192.168.100.100</value>
        <value type="QString">192.168.100.100</value>
        <value type="QString">192.168.100.100</value>
       </valuelist>
       <valuelist type="QVariantList" key="Qt4ProjectManager.MaemoRunConfiguration.LastDeployedRemotePaths">
        <value type="QString">/tmp</value>
        <value type="QString">/tmp</value>
+       <value type="QString">/tmp</value>
+       <value type="QString">/tmp</value>
+       <value type="QString">/tmp</value>
+       <value type="QString">/tmp</value>
       </valuelist>
       <valuelist type="QVariantList" key="Qt4ProjectManager.MaemoRunConfiguration.LastDeployedSysroots">
+       <value type="QString"></value>
+       <value type="QString"></value>
+       <value type="QString"></value>
+       <value type="QString"></value>
        <value type="QString"></value>
        <value type="QString"></value>
       </valuelist>
       <valuelist type="QVariantList" key="Qt4ProjectManager.MaemoRunConfiguration.LastDeployedTimes">
        <value type="QDateTime">2016-05-20T15:30:14</value>
-       <value type="QDateTime">2016-05-23T18:40:50</value>
+       <value type="QDateTime">2016-05-30T11:50:48</value>
+       <value type="QDateTime">2016-05-30T11:47:37</value>
+       <value type="QDateTime">2016-05-30T16:41:49</value>
+       <value type="QDateTime">2016-05-30T14:35:16</value>
+       <value type="QDateTime">2016-05-26T20:20:22</value>
       </valuelist>
       <value type="bool" key="RemoteLinux.GenericDirectUploadStep.IgnoreMissingFiles">false</value>
       <value type="bool" key="RemoteLinux.GenericDirectUploadStep.Incremental">true</value>
@@ -724,7 +744,7 @@
       <valuelist type="QVariantList" key="Qt4ProjectManager.MaemoRunConfiguration.LastDeployedRemotePaths"/>
       <valuelist type="QVariantList" key="Qt4ProjectManager.MaemoRunConfiguration.LastDeployedSysroots"/>
       <valuelist type="QVariantList" key="Qt4ProjectManager.MaemoRunConfiguration.LastDeployedTimes"/>
-      <value type="QString" key="RemoteLinuxInstallPackageStep.CommandLine">/usr/bin/ins-tool -siu /tmp/com.syberos.douban-1.0.0.sop &amp;&amp; rm -f /tmp/com.syberos.douban-1.0.0.sop</value>
+      <value type="QString" key="RemoteLinuxInstallPackageStep.CommandLine">/usr/bin/ins-tool -siu /tmp/com.syberos.douban-1.0.4.sop &amp;&amp; rm -f /tmp/com.syberos.douban-1.0.4.sop</value>
      </valuemap>
      <value type="int" key="ProjectExplorer.BuildStepList.StepsCount">3</value>
      <value type="QString" key="ProjectExplorer.ProjectConfiguration.DefaultDisplayName">部署</value>

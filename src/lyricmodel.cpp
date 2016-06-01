@@ -56,14 +56,15 @@ bool lyricModel::setLyric(lyricData lyric) {
         clearData();
     //    qDebug()<<Q_FUNC_INFO<<__LINE__<<"lyric:"<<lyric.at(0).gettext();
         setcurrentIndex(0);
-        qDebug()<<Q_FUNC_INFO<<__LINE__;
+//        qDebug()<<Q_FUNC_INFO<<__LINE__;
 //        QString text = lyric.at(0).gettext();
-        qDebug()<<Q_FUNC_INFO<<__LINE__;
+//        qDebug()<<Q_FUNC_INFO<<__LINE__;
          beginResetModel();
    if(lyric.isEmpty()) {
        qDebug()<<Q_FUNC_INFO<<__LINE__;
        mLyricData.append(lyricLine(0,"未找到歌词～"));
    } else {
+       qDebug()<<Q_FUNC_INFO<<__LINE__;
       mLyricData = lyric;
 //      qDebug()<<Q_FUNC_INFO<<__LINE__<<"lyric:"<<mLyricData.at(0).gettext();
    }
